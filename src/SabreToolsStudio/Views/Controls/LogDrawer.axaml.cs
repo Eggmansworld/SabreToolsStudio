@@ -7,7 +7,7 @@ namespace SabreToolsStudio.Views.Controls;
 
 public partial class LogDrawer : UserControl
 {
-    private const double CollapsedHeight = 38;
+    private const double CollapsedHeight = 46;
     private const double ExpandedHeight = 300;
 
     private LogDrawerViewModel? _viewModel;

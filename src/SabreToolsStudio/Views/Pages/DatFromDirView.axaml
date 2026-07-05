@@ -63,8 +63,10 @@
                         </Border>
                     </Grid>
 
-                    <!-- Right: hashes + output -->
-                    <StackPanel Grid.Column="2" Spacing="16">
+                    <!-- Right: hashes + output (scrolls only when the window is too short to fit) -->
+                    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,0">
+                    <StackPanel Spacing="16">
                         <Border Classes="card">
                             <StackPanel Spacing="6">
                                 <TextBlock Classes="sectionHeader" Text="Hashes to Include"/>
@@ -128,6 +130,7 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </TabItem>
 

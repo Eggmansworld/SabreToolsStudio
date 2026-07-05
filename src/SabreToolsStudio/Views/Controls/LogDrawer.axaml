@@ -5,7 +5,7 @@
              x:Class="SabreToolsStudio.Views.Controls.LogDrawer"
              x:DataType="vm:LogDrawerViewModel">
 
-    <Border Name="DrawerRoot" Height="38"
+    <Border Name="DrawerRoot" Height="46"
             Background="{DynamicResource AppDrawerBackground}"
             BorderBrush="{DynamicResource AppBorderBrush}"
             BorderThickness="0,1,0,0"
@@ -18,7 +18,7 @@
 
         <DockPanel>
             <!-- Status strip (always visible) -->
-            <Grid DockPanel.Dock="Top" Height="37" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" Margin="16,0,10,0">
+            <Grid DockPanel.Dock="Top" Height="44" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" Margin="16,0,10,0">
                 <Ellipse Grid.Column="0" Width="9" Height="9" Fill="{Binding StatusBrush}"
                          VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <TextBlock Grid.Column="1" Text="{Binding StatusText}" FontWeight="SemiBold" FontSize="12"
@@ -52,6 +52,7 @@
 
             <!-- Log output (revealed when expanded) -->
             <TextBox Name="LogBox" Classes="log" Text="{Binding LogText, Mode=OneWay}"
+                     IsVisible="{Binding IsExpanded}"
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      Padding="16,4"/>
