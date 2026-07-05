@@ -61,8 +61,10 @@ Studio is a great starting point for building your own commands.
 If your collections are compressed with **Zstandard zips** (as produced by RomVault's ZSTD
 mode or 7-Zip-Zstandard), Studio's bundled SabreTools build reads them natively for
 scanning, verification, and rebuilding. On the Sort/Rebuild page you can also **write**
-Zstandard zips, or recompress a zstd collection to standard TorrentZip. Note that plain
-7-Zip cannot open zstd archives — use 7-Zip-Zstandard or RomVault.
+Zstandard zips, or recompress a zstd collection to standard TorrentZip. Zstandard zips created
+by Studio are NOT deterministic and NOT the same as RVZSTD zips created within RomVault. 
+Note that plain 7-Zip cannot open zstd archives — use 7-Zip-Zstandard
+(https://github.com/mcmilk/7-Zip-zstd)
 
 ## Using the app
 
@@ -95,10 +97,16 @@ Tips worth knowing:
 
 ## Building from source
 
-You need the .NET 10 SDK and a checkout of the SabreTools repository sitting next to this
-one (`../SabreTools`). After cloning SabreTools, run `git submodule update --init` inside it.
+You need the .NET 10 SDK and a checkout of the
+[Eggmansworld/SabreTools fork](https://github.com/Eggmansworld/SabreTools) sitting next to
+this repository (`../SabreTools`), on the **`zstd-support`** branch. The fork carries the
+Zstandard read/write patches that Studio's bundled CLI depends on; building against the
+upstream SabreTools repository produces a CLI without Zstandard support.
 
 ```
+git clone -b zstd-support https://github.com/Eggmansworld/SabreTools.git ../SabreTools
+cd ../SabreTools && git submodule update --init && cd ../SabreToolsStudio
+
 # Publish the SabreTools CLI into tools/sabretools (bundled with the GUI)
 ./build-cli.ps1        # Windows
 ./build-cli.sh         # Linux
@@ -122,5 +130,5 @@ folder works on machines with no .NET runtime installed.
 ## Credits and license
 
 - **SabreTools** is by Matt Nadareski — [github.com/SabreTools/SabreTools](https://github.com/SabreTools/SabreTools) (MIT license)
-- **SabreTools Studio** GUI by Eggman, built with [Avalonia UI](https://avaloniaui.net/) (MIT license)
+- **SabreTools Studio** GUI by Eggman, built with Anthropic's Claude Fable 5 High, using [Avalonia UI](https://avaloniaui.net/) (MIT license)
 - TorrentZip/zip handling within SabreTools derives from the RomVault project's Compress library
