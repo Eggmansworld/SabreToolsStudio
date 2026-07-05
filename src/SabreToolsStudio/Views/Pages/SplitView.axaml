@@ -1,0 +1,129 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:controls="using:SabreToolsStudio.Views.Controls"
+             x:Class="SabreToolsStudio.Views.Pages.SplitView"
+             x:DataType="vm:SplitViewModel">
+
+    <DockPanel Margin="28,24,28,16">
+
+        <!-- Header -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                <TextBlock Classes="pageTitle" Text="{Binding Title}"/>
+                <TextBlock Classes="subtle" Text="{Binding Description}"/>
+            </StackPanel>
+            <controls:PresetBar Grid.Column="1" VerticalAlignment="Top"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="*,20,380,20,380">
+
+            <!-- Left: inputs -->
+            <Border Grid.Column="0" Classes="card">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="Input DATs"/>
+                    <controls:PathListEditor ItemsSource="{Binding Inputs}"
+                                             PickerTitle="Select DAT files"
+                                             EmptyText="No inputs yet. Add DAT files (or folders of DATs) to split."/>
+                </DockPanel>
+            </Border>
+
+            <!-- Middle: split modes -->
+            <Border Grid.Column="2" Classes="card" VerticalAlignment="Top">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="sectionHeader" Text="Split Criteria"/>
+                    <TextBlock Classes="subtle" FontSize="12"
+                               Text="Select at least one. Multiple criteria run in the same pass."/>
+
+                    <StackPanel Spacing="6">
+                        <CheckBox IsChecked="{Binding ByExtension}" Content="By file extension"
+                                  ToolTip.Tip="Split based on two lists of file extensions. Useful for combined DATs covering two systems. Files with extensions in neither list are included in both outputs."/>
+                        <StackPanel Spacing="6" Margin="26,0,0,0" IsEnabled="{Binding ByExtension}">
+                            <Grid ColumnDefinitions="*,10,*">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="First DAT extensions" FontSize="12"/>
+                                    <TextBox Text="{Binding ExtensionsA}" AcceptsReturn="True" Height="52" TextWrapping="Wrap"
+                                             Watermark="bin&#x0a;cue"
+                                             ToolTip.Tip="Extensions placed in the first output DAT, one per line (with or without the leading dot)."/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="4">
+                                    <TextBlock Text="Second DAT extensions" FontSize="12"/>
+                                    <TextBox Text="{Binding ExtensionsB}" AcceptsReturn="True" Height="52" TextWrapping="Wrap"
+                                             Watermark="chd"
+                                             ToolTip.Tip="Extensions placed in the second output DAT, one per line (with or without the leading dot)."/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <CheckBox IsChecked="{Binding ByHash}" Content="By best-available hash"
+                                  ToolTip.Tip="Split based on the best available hash for each file, in order of preference: Nodump, SHA-512, SHA-384, SHA-256, SHA-1, MD5, CRC (or worse)."/>
+
+                        <CheckBox IsChecked="{Binding ByLevel}" Content="By SuperDAT level"
+                                  ToolTip.Tip="Split a SuperDAT by the lowest available level of game name. Note: the wiki marks this as not fully implemented."/>
+                        <StackPanel Spacing="4" Margin="26,0,0,0" IsEnabled="{Binding ByLevel}">
+                            <CheckBox IsChecked="{Binding ShortNames}" Content="Use short output names"
+                                      ToolTip.Tip="Use just the name of the folder as the name of the output DAT instead of ClrMamePro-style long names."/>
+                            <CheckBox IsChecked="{Binding BaseNames}" Content="Use source DAT as base name"
+                                      ToolTip.Tip="Include the original DAT name in output names so files from different source DATs don't overwrite each other."/>
+                        </StackPanel>
+
+                        <CheckBox IsChecked="{Binding BySize}" Content="By file size"
+                                  ToolTip.Tip="Split based on the sizes of the files: roms smaller than the radix go in the first DAT, everything else in the second."/>
+                        <StackPanel Spacing="4" Margin="26,0,0,0" IsEnabled="{Binding BySize}">
+                            <TextBlock Text="Radix (bytes)" FontSize="12"/>
+                            <TextBox Text="{Binding Radix}" Watermark="e.g. 1048576"
+                                     ToolTip.Tip="The size midpoint in bytes: roms smaller than this go in the first DAT, and everything greater than or equal goes in the second."/>
+                        </StackPanel>
+
+                        <CheckBox IsChecked="{Binding ByTotalSize}" Content="By total game size (chunks)"
+                                  ToolTip.Tip="Split into chunks based on the combined sizes of the games. Use a sufficiently large chunk size (such as 1GB) or you may run into issues if a single game exceeds it."/>
+                        <StackPanel Spacing="4" Margin="26,0,0,0" IsEnabled="{Binding ByTotalSize}">
+                            <TextBlock Text="Chunk size (bytes)" FontSize="12"/>
+                            <TextBox Text="{Binding ChunkSize}" Watermark="e.g. 1073741824"
+                                     ToolTip.Tip="The total game size in bytes to cut off at for each chunked DAT."/>
+                        </StackPanel>
+
+                        <CheckBox IsChecked="{Binding ByType}" Content="By item type (rom/disk)"
+                                  ToolTip.Tip="Split based on the types of the files, specifically whether the item is a rom or a disk."/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Right: output -->
+            <Border Grid.Column="4" Classes="card" VerticalAlignment="Top">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="sectionHeader" Text="Output"/>
+                    <TextBlock Classes="subtle" FontSize="12"
+                               Text="Formats to write. If none are selected, the input DAT's own format is used."/>
+                    <Border BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="4">
+                        <ScrollViewer Height="180" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding OutputFormats}" Margin="8,6">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:FormatOption}">
+                                        <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Label}"
+                                                  ToolTip.Tip="{Binding Description}" Margin="0,0,0,2"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                    <CheckBox IsChecked="{Binding Deprecated}" Content="Use older 'game' tag in XML"
+                              IsEnabled="{Binding IsXmlSelected}"
+                              ToolTip.Tip="Requires the Logiqx XML output format. Outputs the older 'game' tag instead of 'machine', for compatibility."/>
+                    <CheckBox IsChecked="{Binding Inplace}" Content="Write next to input DATs"
+                              ToolTip.Tip="Write output files to the directory the input DATs came from instead of the output directory."/>
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Output directory" FontSize="12"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools folder"
+                                     Margin="0,0,8,0"
+                                     ToolTip.Tip="This sets an output folder to be used when the files are created. If a path is not defined, the runtime directory is used instead."/>
+                            <Button Grid.Column="1" Click="OnBrowseOutputClick" Content="Browse"
+                                    ToolTip.Tip="Choose the folder where the split DATs will be written"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>

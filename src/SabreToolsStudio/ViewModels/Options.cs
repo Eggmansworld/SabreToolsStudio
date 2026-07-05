@@ -76,6 +76,16 @@ public static class OptionCatalog
         new("--include-spamsum", "SpamSum", "Enable SpamSum fuzzy-hash calculation for each file. Selecting any hash overrides the default of CRC-32, MD5, and SHA-1."),
     ];
 
+    /// <summary>Rebuild output formats for Sort; empty value = uncompressed folders (default)</summary>
+    public static readonly IReadOnlyList<ComboOption> RebuildFormats =
+    [
+        new("", "Uncompressed folders (default)", "Files are rebuilt into plain, uncompressed folders in the output directory."),
+        new("--torrent-zip", "TorrentZip", "Files are rebuilt to TorrentZip (TZip) files: ZIP archives with standardized header information so identical content always produces byte-identical archives. Widely used by RomVault and other ROM managers."),
+        new("--torrent-gzip", "TorrentGZ", "Files are rebuilt to TorrentGZ (TGZ) files: GZip archives with standardized headers, named by the SHA-1 of the contained file. Primarily used by Romba-style depots."),
+        new("--tar", "TAR", "Files are rebuilt to Tape ARchive (TAR) files: a standardized, uncompressed container format widely used in backup applications."),
+        new("--torrent-7zip", "Torrent7Zip", "Files are rebuilt to Torrent7Zip (T7Z) files, based on the 7Zip LZMA container. Note: this currently does not produce proper Torrent-compatible outputs."),
+    ];
+
     /// <summary>DAT preprocessing merge modes (--dat-X flags); empty value = use DAT as-is</summary>
     public static readonly IReadOnlyList<ComboOption> MergeModes =
     [

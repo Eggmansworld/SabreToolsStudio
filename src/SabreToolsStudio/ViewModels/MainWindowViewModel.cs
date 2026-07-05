@@ -22,23 +22,19 @@ public partial class MainWindowViewModel : ViewModelBase
         var statistics = new StatisticsViewModel(settings, _presetService);
         var datFromDir = new DatFromDirViewModel(settings, _presetService);
         var verify = new VerifyViewModel(settings, _presetService);
+        var sort = new SortViewModel(settings, _presetService);
+        var split = new SplitViewModel(settings, _presetService);
 
         PrimaryNav =
         [
             new("dfd", "DAT From Dir", Icons.FolderPlus, datFromDir, Navigate),
-            new("sort", "Sort / Rebuild", Icons.SwapHorizontal,
-                new PlaceholderViewModel("Sort / Rebuild from DAT",
-                    "Rebuild files into organized sets based on one or more DAT files, with output to folders, TorrentZip, TorrentGZ, or TAR.",
-                    3, Icons.SwapHorizontal), Navigate),
+            new("sort", "Sort / Rebuild", Icons.SwapHorizontal, sort, Navigate),
             new("verify", "Verify", Icons.CheckCircle, verify, Navigate),
             new("update", "Update DATs", Icons.Update,
                 new PlaceholderViewModel("Update and Manipulate DATs",
                     "The multitool: convert, merge, diff, filter, dedupe, and rewrite DAT files in nearly any way imaginable.",
                     4, Icons.Update), Navigate),
-            new("split", "Split DATs", Icons.CallSplit,
-                new PlaceholderViewModel("Specialized DAT Splitting",
-                    "Split input DATs by extension, hash availability, level, size, total size, or item type.",
-                    3, Icons.CallSplit), Navigate),
+            new("split", "Split DATs", Icons.CallSplit, split, Navigate),
             new("stats", "Statistics", Icons.ChartBar, statistics, Navigate),
             new("batch", "Batch", Icons.PlaylistPlay,
                 new PlaceholderViewModel("Batch Running",
