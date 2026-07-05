@@ -9,19 +9,22 @@ streams all output into a sliding log drawer, so the main window stays dedicated
 
 ## Features
 
-| Feature | Status |
-| ------- | ------ |
-| Statistics Output | Available |
-| DAT From Dir (DFD/D2D) | Planned (session 2) |
-| Verify from DAT | Planned (session 2) |
-| Sort/Rebuild from DAT | Planned (session 3) |
-| Specialized DAT Splitting | Planned (session 3) |
-| Update and Manipulate DATs | Planned (session 4) |
-| Batch Running | Planned (session 5) |
-| Extract/Restore Headers | Planned (session 5) |
+All seven primary SabreTools features are available:
+
+- **DAT From Dir** - create DATs from ROM folders, with all hash types and full header control
+- **Sort/Rebuild** - rebuild collections to folders, TorrentZip, Zstandard Zip, TorrentGZ (Romba), or TAR
+- **Verify** - check folders against DATs and produce fixdats
+- **Update DATs** - convert, merge, diff, filter, dedupe, and rewrite DATs
+- **Split DATs** - split by extension, hash, level, size, total size, or item type
+- **Statistics** - report generation in text/CSV/HTML/SSV/TSV
+- **Batch** - run batch scripts, with a visual script builder
 
 Plus: named option presets per feature, live CLI command preview with copy-to-clipboard,
-OS-following light/dark theme with manual override, and global thread/log-level options.
+dependency-aware options (invalid flag combinations are prevented), wiki-sourced tooltips
+on every control, a sliding log drawer, and an OS-following light/dark theme with override.
+
+Note: the local SabreTools checkout carries uncommitted patches for Zstandard zip
+reading and writing (`--zstd-zip`); the bundled CLI is built from that patched tree.
 
 ## Building
 
@@ -39,6 +42,15 @@ dotnet run --project src/SabreToolsStudio
 ```
 
 A different SabreTools executable can be selected at runtime on the Settings page.
+
+## Distributable builds
+
+Self-contained single-file builds (no .NET install required on the target machine):
+
+```
+./publish-win.ps1      # -> dist/win-x64
+./publish-linux.sh     # -> dist/linux-x64
+```
 
 ## License
 

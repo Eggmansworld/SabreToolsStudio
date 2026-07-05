@@ -99,6 +99,26 @@ public static class OptionCatalog
         new("--dat-full-non-merged", "Fully Non-Merged", "Child sets contain all items from parents and device references; every set is fully self-contained."),
     ];
 
+    /// <summary>Commands supported by SabreTools batch scripts, with syntax guidance</summary>
+    public static readonly IReadOnlyList<ComboOption> BatchCommands =
+    [
+        new("input", "Parse DAT file(s)", "input(datpath, ...); - Parse new file(s) into the internal state. Each datpath needs to be a file or a folder containing files. Quote paths that contain spaces."),
+        new("d2d", "DAT from directory", "d2d(path, ...); - Perform a dir2dat scan on each path (file or folder), adding the results to the internal state."),
+        new("set", "Set header field", "set(header.field, value); - Set a header field, if it is currently the default. Example: set(header.filename, \"NewFilename.xml\")"),
+        new("filter", "Filter items", "filter(field, value, [remove, [perMachine]]); - Filter on a machine.field or item.field with a value or regex. Set remove to true to omit matches; perMachine removes whole machines when any item fails."),
+        new("extra", "Apply MAME Extra INI", "extra(field, inipath); - Apply a MAME INI to a machine.field or item.field."),
+        new("merge", "Split/merge sets", "merge(mergetype); - Preprocess sets using one of: split, merged, nonmerged, full, or device."),
+        new("descname", "Names from descriptions", "descname(); - Set game names from their descriptions. Takes no arguments."),
+        new("1g1r", "One game per region", "1g1r(region, ...); - Run 1G1R filtering with regions in priority order. Regions are case-insensitive."),
+        new("orpg", "One rom per game", "orpg(); - Split into one rom per game. Takes no arguments."),
+        new("remove", "Remove fields", "remove(field, ...); - Remove machine.field or item.field values from games/items."),
+        new("sds", "Strip scene dates", "sds(); - Remove scene dates from names. Takes no arguments."),
+        new("format", "Set output format(s)", "format(datformat, ...); - Add output format(s) by name, like xml or cmp, similar to the --output-type flag."),
+        new("output", "Set output directory", "output(outdir); - Set the output directory. It will be created on write if it does not exist."),
+        new("write", "Write output", "write([overwrite]); - Write the internal items to the output directory. Optional overwrite defaults to true."),
+        new("reset", "Reset state", "reset(); - Reset the internal state. Takes no arguments."),
+    ];
+
     /// <summary>Deduplication modes for Update; the two flags are mutually exclusive</summary>
     public static readonly IReadOnlyList<ComboOption> DedupModes =
     [

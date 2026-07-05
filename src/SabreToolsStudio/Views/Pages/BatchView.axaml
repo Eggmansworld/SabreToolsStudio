@@ -1,0 +1,117 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:controls="using:SabreToolsStudio.Views.Controls"
+             xmlns:root="using:SabreToolsStudio"
+             x:Class="SabreToolsStudio.Views.Pages.BatchView"
+             x:DataType="vm:BatchViewModel">
+
+    <DockPanel Margin="28,24,28,16">
+
+        <!-- Header -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                <TextBlock Classes="pageTitle" Text="{Binding Title}"/>
+                <TextBlock Classes="subtle" Text="{Binding Description}"/>
+            </StackPanel>
+            <controls:PresetBar Grid.Column="1" VerticalAlignment="Top"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="380,20,*">
+
+            <!-- Left: batch files to run -->
+            <Border Grid.Column="0" Classes="card">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="Batch Scripts to Run"/>
+                    <controls:PathListEditor ItemsSource="{Binding Inputs}"
+                                             AllowFolders="False"
+                                             PickerTitle="Select batch script files"
+                                             EmptyText="No scripts yet. Add existing batch files, or build one on the right and save it."/>
+                </DockPanel>
+            </Border>
+
+            <!-- Right: script builder -->
+            <Border Grid.Column="2" Classes="card">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,10">
+                        <TextBlock Grid.Column="0" Classes="sectionHeader" Text="Script Builder" Margin="0"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                            <Button Command="{Binding AddStepCommand}"
+                                    ToolTip.Tip="Add a new step to the end of the script">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Data="{x:Static root:Icons.FolderPlus}" Width="13" Height="13"/>
+                                    <TextBlock Text="Add Step"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Click="OnSaveScriptClick" IsEnabled="{Binding HasSteps}"
+                                    ToolTip.Tip="Save the script to a file and add it to the run list">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <PathIcon Data="{x:Static root:Icons.ContentSave}" Width="13" Height="13"/>
+                                    <TextBlock Text="Save Script"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Script preview -->
+                    <StackPanel DockPanel.Dock="Bottom" Spacing="4" Margin="0,10,0,0">
+                        <TextBlock Text="Script preview" FontSize="12"/>
+                        <TextBox Text="{Binding ScriptPreview, Mode=OneWay}" Classes="log" IsReadOnly="True"
+                                 Height="140" AcceptsReturn="True"
+                                 BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="4"
+                                 ToolTip.Tip="The exact batch script that Save Script will write to disk."/>
+                    </StackPanel>
+
+                    <!-- Steps -->
+                    <Panel>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding Steps}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:BatchStep}">
+                                        <Grid ColumnDefinitions="200,8,*,8,Auto,Auto,Auto" Margin="0,0,0,6">
+                                            <ComboBox Grid.Column="0" ItemsSource="{Binding Commands}"
+                                                      SelectedItem="{Binding Command}"
+                                                      HorizontalAlignment="Stretch"
+                                                      ToolTip.Tip="{Binding Command.Description}">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                        <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                            <TextBox Grid.Column="2" Text="{Binding Arguments}"
+                                                     Watermark="Arguments (comma-separated, quote paths with spaces)"
+                                                     ToolTip.Tip="{Binding Command.Description}"/>
+                                            <Button Grid.Column="4" Classes="icon"
+                                                    Command="{Binding $parent[ItemsControl].((vm:BatchViewModel)DataContext).MoveStepUpCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip.Tip="Move this step up">
+                                                <PathIcon Data="{x:Static root:Icons.ChevronUp}" Width="12" Height="12"/>
+                                            </Button>
+                                            <Button Grid.Column="5" Classes="icon"
+                                                    Command="{Binding $parent[ItemsControl].((vm:BatchViewModel)DataContext).MoveStepDownCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip.Tip="Move this step down">
+                                                <PathIcon Data="{x:Static root:Icons.ChevronDown}" Width="12" Height="12"/>
+                                            </Button>
+                                            <Button Grid.Column="6" Classes="icon"
+                                                    Command="{Binding $parent[ItemsControl].((vm:BatchViewModel)DataContext).RemoveStepCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip.Tip="Remove this step">
+                                                <PathIcon Data="{x:Static root:Icons.Delete}" Width="12" Height="12"/>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <TextBlock Classes="subtle" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="420"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   IsVisible="{Binding !HasSteps}"
+                                   Text="No steps yet. Click Add Step to start building a script: parse DATs with 'input', transform them with filters and merges, then finish with 'output' and 'write'. Hover any command for its exact syntax."/>
+                    </Panel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>

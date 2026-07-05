@@ -31,11 +31,11 @@
         <DataTemplate DataType="{x:Type vm:UpdateViewModel}">
             <pages:UpdateView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BatchViewModel}">
+            <pages:BatchView/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <pages:SettingsView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:PlaceholderViewModel}">
-            <pages:PlaceholderView/>
         </DataTemplate>
     </Window.DataTemplates>
 

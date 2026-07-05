@@ -25,6 +25,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var sort = new SortViewModel(settings, _presetService);
         var split = new SplitViewModel(settings, _presetService);
         var update = new UpdateViewModel(settings, _presetService);
+        var batch = new BatchViewModel(settings, _presetService);
 
         PrimaryNav =
         [
@@ -34,18 +35,11 @@ public partial class MainWindowViewModel : ViewModelBase
             new("update", "Update DATs", Icons.Update, update, Navigate),
             new("split", "Split DATs", Icons.CallSplit, split, Navigate),
             new("stats", "Statistics", Icons.ChartBar, statistics, Navigate),
-            new("batch", "Batch", Icons.PlaylistPlay,
-                new PlaceholderViewModel("Batch Running",
-                    "Run scripted sequences of DAT operations from batch files, with a visual step builder.",
-                    5, Icons.PlaylistPlay), Navigate),
+            new("batch", "Batch", Icons.PlaylistPlay, batch, Navigate),
         ];
 
         AdvancedNav =
         [
-            new("headers", "Headers", Icons.FileDocument,
-                new PlaceholderViewModel("Extract and Restore Headers",
-                    "Detect, remove, store, and re-apply copier headers (NES, FDS, SNES, and more) on files.",
-                    5, Icons.FileDocument), Navigate),
             new("settings", "Settings", Icons.Cog, new SettingsViewModel(settings, _locator), Navigate),
         ];
 

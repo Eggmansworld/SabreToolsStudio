@@ -23,9 +23,12 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     </ItemGroup>
 
-    <!-- Bundle the SabreTools CLI (published into tools/sabretools by build-cli scripts) -->
+    <!-- Bundle the SabreTools CLI (published into tools/sabretools by build-cli scripts).
+         ExcludeFromSingleFile keeps the CLI as real files on disk instead of being
+         swallowed into the single-file GUI bundle. -->
     <ItemGroup>
-        <None Include="..\..\tools\sabretools\**" CopyToOutputDirectory="PreserveNewest" LinkBase="sabretools" />
+        <None Include="..\..\tools\sabretools\**" CopyToOutputDirectory="PreserveNewest"
+              LinkBase="sabretools" ExcludeFromSingleFile="true" />
     </ItemGroup>
 
 </Project>

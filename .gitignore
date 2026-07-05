@@ -6,3 +6,6 @@ obj/
 
 # Published SabreTools CLI is produced by build-cli scripts, not committed
 tools/sabretools/
+
+# Distributable builds
+dist/
