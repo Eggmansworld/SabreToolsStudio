@@ -24,7 +24,7 @@
                     <Border Grid.Column="0" Classes="card">
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="Input DATs"/>
-                            <controls:PathListEditor ItemsSource="{Binding Inputs}"
+                            <controls:PathListEditor ItemsSource="{Binding Inputs}" DatFilesOnly="True"
                                                      PickerTitle="Select DAT files"
                                                      EmptyText="No inputs yet. Add DAT files (or folders of DATs) to update or convert."/>
                         </DockPanel>
@@ -262,7 +262,7 @@
                                 <TextBlock Classes="sectionHeader" Text="Base DATs"/>
                                 <TextBlock Classes="subtle" FontSize="12"
                                            Text="Used by 'Diff against base' and the base replacement modes. Required when either is enabled."/>
-                                <controls:PathListEditor ItemsSource="{Binding BaseDats}" MinHeight="140"
+                                <controls:PathListEditor ItemsSource="{Binding BaseDats}" MinHeight="140" DatFilesOnly="True"
                                                          PickerTitle="Select base DAT files"
                                                          EmptyText="No base DATs. Add DAT files (or folders of DATs) to use as the comparison or replacement base."/>
                             </StackPanel>

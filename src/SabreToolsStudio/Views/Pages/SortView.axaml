@@ -32,7 +32,7 @@
                 <Border Grid.Row="2" Classes="card">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="DATs to Rebuild Against"/>
-                        <controls:PathListEditor ItemsSource="{Binding Dats}"
+                        <controls:PathListEditor ItemsSource="{Binding Dats}" DatFilesOnly="True"
                                                  PickerTitle="Select DAT files"
                                                  EmptyText="No DATs yet. Add DAT files (or folders of DATs) describing the desired sets."/>
                     </DockPanel>

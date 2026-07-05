@@ -28,6 +28,23 @@ public partial class PathListEditor : UserControl
     public static readonly StyledProperty<string> PickerTitleProperty =
         AvaloniaProperty.Register<PathListEditor, string>(nameof(PickerTitle), defaultValue: "Select files");
 
+    /// <summary>When true, the file picker filters to recognized DAT extensions and
+    /// a warning is shown for added files that SabreTools would skip</summary>
+    public static readonly StyledProperty<bool> DatFilesOnlyProperty =
+        AvaloniaProperty.Register<PathListEditor, bool>(nameof(DatFilesOnly));
+
+    /// <summary>Extensions accepted by SabreTools' DAT parser (Parser.HasValidDatExtension)</summary>
+    private static readonly string[] _datExtensions =
+    [
+        "csv", "dat", "json", "md2", "md4", "md5", "ripemd128", "ripemd160",
+        "sfv", "sha1", "sha256", "sha384", "sha512", "spamsum", "ssv", "tsv", "txt", "xml",
+    ];
+
+    private static readonly FilePickerFileType _datFileType = new("DAT files")
+    {
+        Patterns = [.. _datExtensions.Select(ext => "*." + ext)],
+    };
+
     private ObservableCollection<string>? _items;
 
     public PathListEditor()
@@ -68,6 +85,12 @@ public partial class PathListEditor : UserControl
         set => SetValue(PickerTitleProperty, value);
     }
 
+    public bool DatFilesOnly
+    {
+        get => GetValue(DatFilesOnlyProperty);
+        set => SetValue(DatFilesOnlyProperty, value);
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
@@ -86,7 +109,8 @@ public partial class PathListEditor : UserControl
         }
         else if (change.Property == AllowFilesProperty
             || change.Property == AllowFoldersProperty
-            || change.Property == EmptyTextProperty)
+            || change.Property == EmptyTextProperty
+            || change.Property == DatFilesOnlyProperty)
         {
             UpdateVisibility();
         }
@@ -100,6 +124,29 @@ public partial class PathListEditor : UserControl
         AddFolderButton.IsVisible = AllowFolders;
         EmptyHint.Text = EmptyText;
         EmptyHint.IsVisible = _items is null || _items.Count == 0;
+        UpdateDatWarning();
+    }
+
+    private void UpdateDatWarning()
+    {
+        if (!DatFilesOnly || _items is null)
+        {
+            WarningHint.IsVisible = false;
+            return;
+        }
+
+        // Only individual files can be checked; folders may contain any mix of DATs
+        int unrecognized = _items.Count(path =>
+            File.Exists(path)
+            && !_datExtensions.Contains(Path.GetExtension(path).TrimStart('.').ToLowerInvariant()));
+
+        WarningHint.IsVisible = unrecognized > 0;
+        if (unrecognized > 0)
+        {
+            WarningHint.Text = unrecognized == 1
+                ? "1 entry does not have a recognized DAT extension and will be skipped by SabreTools. This feature works on DAT files, not ROM archives - to create a DAT from ROMs, use DAT From Dir."
+                : $"{unrecognized} entries do not have a recognized DAT extension and will be skipped by SabreTools. This feature works on DAT files, not ROM archives - to create a DAT from ROMs, use DAT From Dir.";
+        }
     }
 
     private void AddPaths(IEnumerable<string?> paths)
@@ -135,6 +182,7 @@ public partial class PathListEditor : UserControl
         {
             Title = PickerTitle,
             AllowMultiple = true,
+            FileTypeFilter = DatFilesOnly ? [_datFileType, FilePickerFileTypes.All] : null,
         });
         AddPaths(files.Select(f => f.TryGetLocalPath()));
     }
