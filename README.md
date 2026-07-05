@@ -1,5 +1,7 @@
 # SabreTools Studio
 
+![SabreTools Studio](assets/Image_banner.png)
+
 **A graphical front-end for the SabreTools DAT manager, for Windows and Linux.**
 
 SabreTools Studio puts the most-used features of the SabreTools command line tool behind a
@@ -47,6 +49,10 @@ folder by default, unless you choose an output directory on the feature page.
 Every option in the app carries a hover tooltip explaining what it does, sourced from the
 SabreTools documentation, so you rarely need to leave the app to understand a setting.
 
+![Building a DAT from a folder on the DAT From Dir page, with the assembled command shown in the command bar](assets/Image_sshot_1.png)
+*Building a DAT from a folder. The command bar along the bottom always shows the exact
+SabreTools command that will run.*
+
 ### Not everything is in the GUI
 
 Studio covers the seven primary SabreTools features listed above, but it is **not** a
@@ -77,6 +83,10 @@ Note that plain 7-Zip cannot open zstd archives — use 7-Zip-Zstandard
 5. **Click Run.** The log drawer slides up and streams the tool's output live. Collapse it
    with the chevron; it stays out of your way as a one-line status strip. You can cancel a
    running operation at any time.
+
+![Verifying a MAME CHD collection, with the log drawer open and streaming live output](assets/Image_sshot_2.png)
+*A verification in progress: the log drawer slides up automatically and streams SabreTools'
+output live, with elapsed time in the status strip and a Cancel button in the command bar.*
 
 Tips worth knowing:
 
