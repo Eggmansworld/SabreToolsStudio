@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:root="using:SabreToolsStudio"
+             x:Class="SabreToolsStudio.Views.Controls.PresetBar"
+             x:DataType="vm:FeaturePageViewModel">
+
+    <StackPanel Orientation="Horizontal" Spacing="8">
+        <ComboBox ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}"
+                  PlaceholderText="Presets" MinWidth="150"
+                  ToolTip.Tip="Load a saved set of options for this feature"/>
+        <TextBox Text="{Binding PresetName}" Watermark="Preset name" MinWidth="130"
+                 ToolTip.Tip="Name to save the current options under"/>
+        <Button Command="{Binding SavePresetCommand}"
+                ToolTip.Tip="Save the current options as a named preset">
+            <PathIcon Data="{x:Static root:Icons.ContentSave}" Width="14" Height="14"/>
+        </Button>
+        <Button Command="{Binding DeletePresetCommand}"
+                ToolTip.Tip="Delete the selected preset">
+            <PathIcon Data="{x:Static root:Icons.Delete}" Width="14" Height="14"/>
+        </Button>
+    </StackPanel>
+</UserControl>

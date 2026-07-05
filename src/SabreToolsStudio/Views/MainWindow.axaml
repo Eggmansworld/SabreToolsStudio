@@ -16,6 +16,12 @@
         <DataTemplate DataType="{x:Type vm:StatisticsViewModel}">
             <pages:StatisticsView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DatFromDirViewModel}">
+            <pages:DatFromDirView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:VerifyViewModel}">
+            <pages:VerifyView/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <pages:SettingsView/>
         </DataTemplate>

@@ -82,6 +82,10 @@ public abstract partial class FeaturePageViewModel : ViewModelBase
         return $"\"{arg.Replace("\"", "\\\"")}\"";
     }
 
+    /// <summary>Split a multiline/comma-separated text box into trimmed, non-empty values</summary>
+    protected static IEnumerable<string> SplitMultiline(string text) =>
+        text.Split(['\r', '\n', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
     protected void NotifyCommandChanged()
     {
         OnPropertyChanged(nameof(CommandPreview));

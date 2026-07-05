@@ -2,23 +2,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using SabreToolsStudio.Services;
 
 namespace SabreToolsStudio.ViewModels;
-
-/// <summary>
-/// A selectable output format option with wiki-sourced description for tooltips
-/// </summary>
-public partial class FormatOption(string value, string label, string description) : ObservableObject
-{
-    public string Value { get; } = value;
-    public string Label { get; } = label;
-    public string Description { get; } = description;
-
-    [ObservableProperty]
-    private bool _isSelected;
-}
 
 /// <summary>
 /// Statistics Output feature (--stats): combined or individual statistics for input DAT files
@@ -51,9 +37,6 @@ public partial class StatisticsViewModel : FeaturePageViewModel
     /// <summary>Input DAT files or folders of DATs</summary>
     public ObservableCollection<string> Inputs { get; } = [];
 
-    [ObservableProperty]
-    private string? _selectedInput;
-
     public ObservableCollection<FormatOption> ReportFormats { get; }
 
     [ObservableProperty]
@@ -72,25 +55,6 @@ public partial class StatisticsViewModel : FeaturePageViewModel
     private bool _individual;
 
     private void OnInputsChanged(object? sender, NotifyCollectionChangedEventArgs e) => NotifyCommandChanged();
-
-    public void AddInputs(IEnumerable<string> paths)
-    {
-        foreach (string path in paths)
-        {
-            if (!string.IsNullOrWhiteSpace(path) && !Inputs.Contains(path))
-                Inputs.Add(path);
-        }
-    }
-
-    [RelayCommand]
-    private void RemoveInput()
-    {
-        if (SelectedInput is string selected)
-            Inputs.Remove(selected);
-    }
-
-    [RelayCommand]
-    private void ClearInputs() => Inputs.Clear();
 
     protected override IEnumerable<string> InputPaths => Inputs;
 
@@ -164,7 +128,8 @@ public partial class StatisticsViewModel : FeaturePageViewModel
         Individual = preset.Individual;
 
         Inputs.Clear();
-        AddInputs(preset.Inputs);
+        foreach (string input in preset.Inputs.Where(p => !string.IsNullOrWhiteSpace(p)))
+            Inputs.Add(input);
     }
 
     #endregion

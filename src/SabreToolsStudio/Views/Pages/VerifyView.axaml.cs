@@ -5,16 +5,16 @@ using SabreToolsStudio.ViewModels;
 
 namespace SabreToolsStudio.Views.Pages;
 
-public partial class StatisticsView : UserControl
+public partial class VerifyView : UserControl
 {
-    public StatisticsView()
+    public VerifyView()
     {
         InitializeComponent();
     }
 
     private async void OnBrowseOutputClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not StatisticsViewModel vm || TopLevel.GetTopLevel(this) is not { } topLevel)
+        if (DataContext is not VerifyViewModel vm || TopLevel.GetTopLevel(this) is not { } topLevel)
             return;
 
         var folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions

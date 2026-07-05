@@ -20,21 +20,17 @@ public partial class MainWindowViewModel : ViewModelBase
         LogDrawer = new LogDrawerViewModel(_runner);
 
         var statistics = new StatisticsViewModel(settings, _presetService);
+        var datFromDir = new DatFromDirViewModel(settings, _presetService);
+        var verify = new VerifyViewModel(settings, _presetService);
 
         PrimaryNav =
         [
-            new("dfd", "DAT From Dir", Icons.FolderPlus,
-                new PlaceholderViewModel("DAT From Dir",
-                    "Create a DAT file from an input directory or set of files, hashing every file (and archive contents) it finds.",
-                    2, Icons.FolderPlus), Navigate),
+            new("dfd", "DAT From Dir", Icons.FolderPlus, datFromDir, Navigate),
             new("sort", "Sort / Rebuild", Icons.SwapHorizontal,
                 new PlaceholderViewModel("Sort / Rebuild from DAT",
                     "Rebuild files into organized sets based on one or more DAT files, with output to folders, TorrentZip, TorrentGZ, or TAR.",
                     3, Icons.SwapHorizontal), Navigate),
-            new("verify", "Verify", Icons.CheckCircle,
-                new PlaceholderViewModel("Verify from DAT",
-                    "Check an input folder against one or more DAT files and produce a fixdat of anything missing.",
-                    2, Icons.CheckCircle), Navigate),
+            new("verify", "Verify", Icons.CheckCircle, verify, Navigate),
             new("update", "Update DATs", Icons.Update,
                 new PlaceholderViewModel("Update and Manipulate DATs",
                     "The multitool: convert, merge, diff, filter, dedupe, and rewrite DAT files in nearly any way imaginable.",
@@ -59,7 +55,7 @@ public partial class MainWindowViewModel : ViewModelBase
             new("settings", "Settings", Icons.Cog, new SettingsViewModel(settings, _locator), Navigate),
         ];
 
-        Navigate(PrimaryNav.First(item => item.Key == "stats"));
+        Navigate(PrimaryNav.First(item => item.Key == "dfd"));
     }
 
     public ObservableCollection<NavItemViewModel> PrimaryNav { get; }

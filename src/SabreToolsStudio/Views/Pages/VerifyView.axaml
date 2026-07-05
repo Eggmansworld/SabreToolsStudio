@@ -1,0 +1,132 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:controls="using:SabreToolsStudio.Views.Controls"
+             x:Class="SabreToolsStudio.Views.Pages.VerifyView"
+             x:DataType="vm:VerifyViewModel">
+
+    <DockPanel Margin="28,24,28,16">
+
+        <!-- Header -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                <TextBlock Classes="pageTitle" Text="{Binding Title}"/>
+                <TextBlock Classes="subtle" Text="{Binding Description}"/>
+            </StackPanel>
+            <controls:PresetBar Grid.Column="1" VerticalAlignment="Top"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="*,20,400">
+
+            <!-- Left: folders to verify + DATs -->
+            <Grid Grid.Column="0" RowDefinitions="*,16,*">
+                <Border Grid.Row="0" Classes="card">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="Folders to Verify"/>
+                        <controls:PathListEditor ItemsSource="{Binding Inputs}"
+                                                 AllowFiles="False"
+                                                 PickerTitle="Select folders to verify"
+                                                 EmptyText="No folders yet. Add the folders containing the files to check."/>
+                    </DockPanel>
+                </Border>
+
+                <Border Grid.Row="2" Classes="card">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="DATs to Verify Against"/>
+                        <controls:PathListEditor ItemsSource="{Binding Dats}"
+                                                 PickerTitle="Select DAT files"
+                                                 EmptyText="No DATs yet. Add DAT files (or folders of DATs) describing the expected sets."/>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- Right: options -->
+            <StackPanel Grid.Column="2" Spacing="16">
+
+                <Border Classes="card">
+                    <StackPanel Spacing="6">
+                        <TextBlock Classes="sectionHeader" Text="Verification"/>
+                        <CheckBox IsChecked="{Binding HashOnly}" Content="Check files by hash only"
+                                  ToolTip.Tip="Files are not checked by name but by hash alone. This allows verification of possibly incorrectly named folders and sets without the proper set structure."/>
+                        <CheckBox IsChecked="{Binding Quick}" Content="Quick scan of archives"
+                                  ToolTip.Tip="Only use archive header information to get file information. Fastest option, but most archive formats only provide CRC and size, which can lead to inaccuracies."/>
+                        <CheckBox IsChecked="{Binding Individual}" Content="Process input DATs individually"
+                                  ToolTip.Tip="In cases where DATs would be processed in bulk, this processes each DAT on its own instead."/>
+                        <CheckBox IsChecked="{Binding ChdsAsFiles}" Content="CHDs as files"
+                                  ToolTip.Tip="Normally, CHDs would be processed using their internal hash to compare against the input DATs. This forces all CHDs to be treated like regular files."/>
+                        <CheckBox IsChecked="{Binding AaruFormatsAsFiles}" Content="AaruFormats as files"
+                                  ToolTip.Tip="Normally, AaruFormats would be processed using their internal hash to compare against the input DATs. This forces all AaruFormats to be treated like regular files."/>
+                        <Grid ColumnDefinitions="Auto,12,*">
+                            <CheckBox Grid.Column="0" IsChecked="{Binding UseHeaderSkipper}" Content="Header skipper"
+                                      ToolTip.Tip="Use copier header skippers to determine if a file matches. Leave the name blank to try all known skippers, or enter a specific one such as fds.xml."/>
+                            <TextBox Grid.Column="2" Text="{Binding HeaderSkipper}" Watermark="Name (blank = all)"
+                                     IsEnabled="{Binding UseHeaderSkipper}"
+                                     ToolTip.Tip="Specific copier header skipper to use, such as fds.xml. Blank means all known skippers are tried."/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="sectionHeader" Text="Depot"/>
+                        <Grid ColumnDefinitions="Auto,12,*">
+                            <CheckBox Grid.Column="0" IsChecked="{Binding Depot}" Content="Inputs are Romba depots"
+                                      ToolTip.Tip="All input directories will be assumed to be Romba-style depots instead of plain folders."/>
+                            <TextBox Grid.Column="2" Text="{Binding DepotDepth}" Watermark="Depth (default 4)"
+                                     IsEnabled="{Binding Depot}"
+                                     ToolTip.Tip="Optionally set the depth of input depots. Defaults to 4 levels deep."/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="sectionHeader" Text="Processing"/>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="DAT merge preprocessing" FontSize="12"/>
+                            <ComboBox ItemsSource="{Binding MergeModes}" SelectedItem="{Binding MergeMode}"
+                                      HorizontalAlignment="Stretch"
+                                      ToolTip.Tip="Preprocess the DAT into a specific merge structure (split, merged, non-merged, etc.) before verification. See the Merging page of the SabreTools wiki for details.">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                        <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Output directory (for the fixdat)" FontSize="12"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools folder"
+                                         Margin="0,0,8,0"
+                                         ToolTip.Tip="The folder where the fixdat of missing files is written. If a path is not defined, the runtime directory is used instead."/>
+                                <Button Grid.Column="1" Click="OnBrowseOutputClick" Content="Browse"
+                                        ToolTip.Tip="Choose the folder where the fixdat will be written"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="sectionHeader" Text="Filtering"/>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Filters (one per line)" FontSize="12"/>
+                            <TextBox Text="{Binding Filters}" AcceptsReturn="True" Height="60" TextWrapping="Wrap"
+                                     Watermark="machine.name:^.*?\(.*Europe.*\)$"
+                                     ToolTip.Tip="Filter any valid item or machine field from inputs, one filter per line. See the Filters page of the SabreTools wiki for the full syntax."/>
+                        </StackPanel>
+                        <CheckBox IsChecked="{Binding MatchOfTags}" Content="Match cloneof/romof tags in name filters"
+                                  ToolTip.Tip="Requires at least one filter. Allows game-name filters to also be checked against the romof and cloneof tags."/>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="MAME Extra INIs (one per line)" FontSize="12"/>
+                            <TextBox Text="{Binding ExtraInis}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
+                                     Watermark="machine.category:C:\path\to\catlist.ini"
+                                     ToolTip.Tip="Apply any valid MAME INI for any valid field in the DAT, one entry per line. See the Extras page of the SabreTools wiki for details."/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>

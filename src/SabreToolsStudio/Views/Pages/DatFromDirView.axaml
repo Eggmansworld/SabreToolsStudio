@@ -1,0 +1,296 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:controls="using:SabreToolsStudio.Views.Controls"
+             x:Class="SabreToolsStudio.Views.Pages.DatFromDirView"
+             x:DataType="vm:DatFromDirViewModel">
+
+    <DockPanel Margin="28,24,28,16">
+
+        <!-- Header -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                <TextBlock Classes="pageTitle" Text="{Binding Title}"/>
+                <TextBlock Classes="subtle" Text="{Binding Description}"/>
+            </StackPanel>
+            <controls:PresetBar Grid.Column="1" VerticalAlignment="Top"/>
+        </Grid>
+
+        <TabControl Padding="0,12,0,0">
+
+            <!-- ============ SETUP TAB ============ -->
+            <TabItem Header="Setup">
+                <Grid ColumnDefinitions="*,20,400">
+
+                    <!-- Left: inputs + file treatment -->
+                    <Grid Grid.Column="0" RowDefinitions="*,16,Auto">
+                        <Border Grid.Row="0" Classes="card">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="Input Folders / Files"/>
+                                <controls:PathListEditor ItemsSource="{Binding Inputs}"
+                                                         PickerTitle="Select folders or files to scan"
+                                                         EmptyText="No inputs yet. Add the folders (or individual files) to build the DAT from."/>
+                            </DockPanel>
+                        </Border>
+
+                        <Border Grid.Row="2" Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="File Treatment"/>
+                                <WrapPanel>
+                                    <CheckBox IsChecked="{Binding ArchivesAsFiles}" Content="Archives as files" Margin="0,0,16,4"
+                                              ToolTip.Tip="Instead of trying to enumerate the files within archives, treat the archives as files themselves. This is good for uncompressed sets that include archives that should be read as-is."/>
+                                    <CheckBox IsChecked="{Binding ChdsAsFiles}" Content="CHDs as files" Margin="0,0,16,4"
+                                              ToolTip.Tip="Normally, CHDs would be processed using their internal hash to compare against the input DATs. This flag forces all CHDs to be treated like regular files."/>
+                                    <CheckBox IsChecked="{Binding AaruFormatsAsFiles}" Content="AaruFormats as files" Margin="0,0,16,4"
+                                              ToolTip.Tip="Normally, AaruFormats would be processed using their internal hash to compare against the input DATs. This flag forces all AaruFormats to be treated like regular files."/>
+                                    <CheckBox IsChecked="{Binding SkipArchives}" Content="Skip all archives" Margin="0,0,16,4"
+                                              ToolTip.Tip="Skip any files that are treated like archives."/>
+                                    <CheckBox IsChecked="{Binding SkipFiles}" Content="Skip all non-archives" Margin="0,0,16,4"
+                                              ToolTip.Tip="Skip any files that are not treated like archives."/>
+                                    <CheckBox IsChecked="{Binding AddBlankFiles}" Content="Blank entries for empty folders" Margin="0,0,16,4"
+                                              ToolTip.Tip="Blank entries will be created for each of the empty directories in the source. This is useful for tools that require all folders be accounted for in the output DAT."/>
+                                    <CheckBox IsChecked="{Binding AddDate}" Content="Add file dates" Margin="0,0,16,4"
+                                              ToolTip.Tip="The date will be appended to each file's information in the output DAT, in the standardized format yyyy/MM/dd HH:mm:ss."/>
+                                </WrapPanel>
+                                <Grid ColumnDefinitions="Auto,12,*">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding UseHeaderSkipper}" Content="Use copier header skipper"
+                                              ToolTip.Tip="Detect and skip copier headers (NES, FDS, SNES, etc.) when hashing files. Leave the name blank to try all known skippers, or enter a specific skipper such as fds.xml."/>
+                                    <TextBox Grid.Column="2" Text="{Binding HeaderSkipper}" Watermark="Skipper name (blank = all)"
+                                             IsEnabled="{Binding UseHeaderSkipper}"
+                                             ToolTip.Tip="Specific copier header skipper to use, such as fds.xml. Blank means all known skippers are tried."/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Right: hashes + output -->
+                    <StackPanel Grid.Column="2" Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="sectionHeader" Text="Hashes to Include"/>
+                                <TextBlock Classes="subtle" FontSize="12"
+                                           Text="If none are selected, CRC-32, MD5, and SHA-1 are calculated (the default)."/>
+                                <ItemsControl ItemsSource="{Binding HashOptions}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type vm:FormatOption}">
+                                            <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Label}"
+                                                      ToolTip.Tip="{Binding Description}" Margin="0,0,12,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Output"/>
+                                <TextBlock Classes="subtle" FontSize="12"
+                                           Text="Formats to write. If none are selected, Logiqx XML is used."/>
+                                <Border BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="4">
+                                    <ScrollViewer Height="150" VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding OutputFormats}" Margin="8,6">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type vm:FormatOption}">
+                                                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Label}"
+                                                              ToolTip.Tip="{Binding Description}" Margin="0,0,0,2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
+                                <CheckBox IsChecked="{Binding Deprecated}" Content="Use older 'game' tag in XML"
+                                          IsEnabled="{Binding IsXmlSelected}"
+                                          ToolTip.Tip="Requires the Logiqx XML output format. By default, Logiqx XML DATs output with the more modern 'machine' tag for each set; this outputs the older 'game' tag instead, for compatibility."/>
+                                <CheckBox IsChecked="{Binding NoAutomaticDate}" Content="Don't include date in file name"
+                                          ToolTip.Tip="Normally, the DAT will be created with the date in the file name in brackets. This removes that."/>
+                                <Grid ColumnDefinitions="Auto,12,*">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Romba}" Content="Romba depot output"
+                                              ToolTip.Tip="Read and write DATs and output files to and from a Romba-style depot. This implies TorrentGZ input and output for physical files, and requires SHA-1."/>
+                                    <TextBox Grid.Column="2" Text="{Binding RombaDepth}" Watermark="Depth (default 4)"
+                                             IsEnabled="{Binding Romba}"
+                                             ToolTip.Tip="Optionally set the depth of output depots. Defaults to 4 levels deep."/>
+                                </Grid>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Output directory" FontSize="12"/>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools folder"
+                                                 Margin="0,0,8,0"
+                                                 ToolTip.Tip="This sets an output folder to be used when the files are created. If a path is not defined, the runtime directory is used instead."/>
+                                        <Button Grid.Column="1" Click="OnBrowseOutputClick" Content="Browse"
+                                                ToolTip.Tip="Choose the folder where the DAT will be written"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- ============ DAT HEADER TAB ============ -->
+            <TabItem Header="DAT Header">
+                <StackPanel Spacing="16" MaxWidth="900" HorizontalAlignment="Left">
+                    <Border Classes="card">
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="sectionHeader" Text="Header Fields"/>
+                            <TextBlock Classes="subtle" FontSize="12"
+                                       Text="All fields are optional. Anything left blank uses the default (usually derived from the input folder name)."/>
+                            <Grid ColumnDefinitions="Auto,8,*,24,Auto,8,*" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Filename" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding DatFilename}"
+                                         ToolTip.Tip="Set the external filename for the output DAT(s)."/>
+                                <TextBlock Grid.Row="0" Grid.Column="4" Text="Name" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="0" Grid.Column="6" Text="{Binding DatName}"
+                                         ToolTip.Tip="Set the name header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding DatDescription}"
+                                         ToolTip.Tip="Set the description header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="2" Grid.Column="4" Text="Category" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding DatCategory}"
+                                         ToolTip.Tip="Set the category header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Version" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding DatVersion}"
+                                         ToolTip.Tip="Set the version header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="4" Grid.Column="4" Text="Date" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="4" Grid.Column="6" Text="{Binding DatDate}"
+                                         ToolTip.Tip="Set the date header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Author" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding DatAuthor}"
+                                         ToolTip.Tip="Set the author header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="6" Grid.Column="4" Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="6" Grid.Column="6" Text="{Binding DatEmail}"
+                                         ToolTip.Tip="Set the email header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Homepage" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding DatHomepage}"
+                                         ToolTip.Tip="Set the homepage header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="8" Grid.Column="4" Text="URL" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="8" Grid.Column="6" Text="{Binding DatUrl}"
+                                         ToolTip.Tip="Set the URL header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="10" Grid.Column="0" Text="Comment" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="10" Grid.Column="2" Text="{Binding DatComment}"
+                                         ToolTip.Tip="Set the comment header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="10" Grid.Column="4" Text="Root dir" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="10" Grid.Column="6" Text="{Binding DatRoot}"
+                                         ToolTip.Tip="Set the rootdir (as used by SuperDAT mode) for the output DAT(s)."/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="sectionHeader" Text="Type and Force Tags"/>
+                            <CheckBox IsChecked="{Binding SuperDat}" Content="SuperDAT mode"
+                                      ToolTip.Tip="Set the type flag to SuperDAT for the output DAT, preserving the directory structure of the input folder."/>
+                            <Grid ColumnDefinitions="*,16,*,16,*">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="Force merging" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding ForceMergingModes}" SelectedItem="{Binding ForceMerging}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Set the forcemerging tag in the DAT header, instructing ROM managers how to merge sets.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="4">
+                                    <TextBlock Text="Force nodump" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding ForceNodumpModes}" SelectedItem="{Binding ForceNodump}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Set the forcenodump tag in the DAT header, instructing ROM managers how to handle nodump entries.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4" Spacing="4">
+                                    <TextBlock Text="Force packing" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding ForcePackingModes}" SelectedItem="{Binding ForcePacking}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Set the forcepacking tag in the DAT header, instructing ROM managers how to pack rebuilt sets.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </TabItem>
+
+            <!-- ============ FILTERING TAB ============ -->
+            <TabItem Header="Filtering">
+                <Grid ColumnDefinitions="*,20,*" MaxWidth="1100" HorizontalAlignment="Left">
+                    <StackPanel Grid.Column="0" Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="One Game Per Region (1G1R)"/>
+                                <CheckBox IsChecked="{Binding OneGamePerRegion}" Content="Keep one game per region"
+                                          ToolTip.Tip="Use an ordered list of regions so only one game from each set of parent and clones is included. Requires cloneof or romof tags to function properly."/>
+                                <StackPanel Spacing="4" IsEnabled="{Binding OneGamePerRegion}">
+                                    <TextBlock Text="Regions, in priority order (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding Regions}" AcceptsReturn="True" Height="90" TextWrapping="Wrap"
+                                             Watermark="USA&#x0a;Europe&#x0a;Japan"
+                                             ToolTip.Tip="Add regions in priority order for 1G1R filtering. If none are supplied, only parent sets are included in the output."/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card">
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="sectionHeader" Text="Set Reshaping"/>
+                                <CheckBox IsChecked="{Binding OneRomPerGame}" Content="One rom per game"
+                                          ToolTip.Tip="Output each rom to its own game as a subfolder of the original parent. Useful when every rom should live in its own output set."/>
+                                <CheckBox IsChecked="{Binding SceneDateStrip}" Content="Strip dates from scene names"
+                                          ToolTip.Tip="Sets with scene names will have the date removed from the beginning. For example, 01.01.01-Game_Name-GROUP becomes Game_Name-GROUP."/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Field Filters"/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Filters (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding Filters}" AcceptsReturn="True" Height="80" TextWrapping="Wrap"
+                                             Watermark="machine.name:^.*?\(.*Europe.*\)$"
+                                             ToolTip.Tip="Filter any valid item or machine field from inputs, one filter per line. See the Filters page of the SabreTools wiki for the full syntax."/>
+                                </StackPanel>
+                                <CheckBox IsChecked="{Binding MatchOfTags}" Content="Match cloneof/romof tags in name filters"
+                                          ToolTip.Tip="Requires at least one filter. Allows game-name filters to also be checked against the romof and cloneof tags, enabling more advanced set-building, especially for arcade sets."/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Exclude fields (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding ExcludeFields}" AcceptsReturn="True" Height="60" TextWrapping="Wrap"
+                                             Watermark="item.date"
+                                             ToolTip.Tip="Exclude any valid item or machine field from outputs, one field per line. See the Fields page of the SabreTools wiki for valid names."/>
+                                </StackPanel>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="MAME Extra INIs (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding ExtraInis}" AcceptsReturn="True" Height="60" TextWrapping="Wrap"
+                                             Watermark="machine.category:C:\path\to\catlist.ini"
+                                             ToolTip.Tip="Apply any valid MAME INI for any valid field in the DAT, one entry per line. See the Extras page of the SabreTools wiki for details."/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</UserControl>
