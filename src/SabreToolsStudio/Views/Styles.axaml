@@ -99,4 +99,19 @@
         <Setter Property="Background" Value="Transparent"/>
     </Style>
 
+    <!-- Nav-rail link buttons (external links in the Help group) -->
+    <Style Selector="Button.navLink">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="22,8,10,8"/>
+        <Setter Property="Margin" Value="0,1"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.navLink:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AppNavHoverBrush}"/>
+    </Style>
+
 </Styles>

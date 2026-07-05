@@ -1,62 +1,126 @@
 # SabreTools Studio
 
-A cross-platform (Windows/Linux) graphical front-end for [SabreTools](https://github.com/SabreTools/SabreTools),
-built with [Avalonia UI](https://avaloniaui.net/). SabreTools Studio assembles and runs SabreTools CLI
-commands for you, with every option documented inline via tooltips sourced from the SabreTools wiki.
+**A graphical front-end for the SabreTools DAT manager, for Windows and Linux.**
 
-SabreTools Studio wraps the SabreTools executable as a child process (using its `--script` mode) and
-streams all output into a sliding log drawer, so the main window stays dedicated to setting up commands.
+SabreTools Studio puts the most-used features of the SabreTools command line tool behind a
+clean, modern interface. If you manage ROM collections with tools like RomVault, you already
+know the workflow: build DATs from folders, verify collections against DATs, rebuild files
+into standardized archives, and manipulate the DAT files themselves. Studio does all of that
+without you having to memorize a single command line flag — while *showing* you the exact
+command it runs, so you can learn the CLI as you go if you want to.
+
+> **Important:** Studio is an unofficial companion to [SabreTools](https://github.com/SabreTools/SabreTools),
+> which is written and maintained by Matt Nadareski. Studio is not affiliated with or endorsed
+> by the SabreTools project. For complete documentation of every feature and option, read the
+> [SabreTools Wiki](https://github.com/SabreTools/SabreTools/wiki) — it is the authoritative
+> reference, and both links are available inside the app under **Help** in the left sidebar.
+
+---
+
+## What's in the box
+
+A Studio installation is just one folder:
+
+```
+SabreToolsStudio.exe        <- the application (self-contained; no .NET install needed)
+SabreToolsStudio.config     <- created on first use; all your settings and presets
+sabretools\                 <- the bundled SabreTools command line tool that does the real work
+```
+
+Studio is **fully portable**. It never touches the Windows registry, your user profile, or
+temp folders. Copy the folder to another machine or a USB stick and everything — including
+your saved presets — goes with it. Any output (DATs, fixdats, reports) lands in this same
+folder by default, unless you choose an output directory on the feature page.
 
 ## Features
 
-All seven primary SabreTools features are available:
+| Page | What it does |
+| ---- | ------------ |
+| **DAT From Dir** | Scan a folder of ROMs (loose files or archives) and create a DAT from it, with your choice of hashes (CRC-32 up to SHA-512 and more) and full control of the DAT header fields. |
+| **Sort / Rebuild** | Rebuild files into organized sets based on a DAT. Output to plain folders, **TorrentZip**, **Zstandard Zip**, TorrentGZ (Romba depots), or TAR. |
+| **Verify** | Check folders against one or more DATs. Anything missing is written out as a **fixdat**, ready to share or fill. |
+| **Update DATs** | The multitool: convert between DAT formats, merge with deduplication, diff DATs against each other or a base set, apply 1G1R filtering, clean names, and much more. |
+| **Split DATs** | Split DATs by extension, best-available hash, file size, total game size, or item type. |
+| **Statistics** | Game/rom counts, total sizes, and hash coverage for any DATs, output as text, CSV, HTML, SSV, or TSV. |
+| **Batch** | Run SabreTools batch scripts, and build them visually: add steps, fill in arguments, watch the live script preview, save, run. |
 
-- **DAT From Dir** - create DATs from ROM folders, with all hash types and full header control
-- **Sort/Rebuild** - rebuild collections to folders, TorrentZip, Zstandard Zip, TorrentGZ (Romba), or TAR
-- **Verify** - check folders against DATs and produce fixdats
-- **Update DATs** - convert, merge, diff, filter, dedupe, and rewrite DATs
-- **Split DATs** - split by extension, hash, level, size, total size, or item type
-- **Statistics** - report generation in text/CSV/HTML/SSV/TSV
-- **Batch** - run batch scripts, with a visual script builder
+Every option in the app carries a hover tooltip explaining what it does, sourced from the
+SabreTools documentation, so you rarely need to leave the app to understand a setting.
 
-Plus: named option presets per feature, live CLI command preview with copy-to-clipboard,
-dependency-aware options (invalid flag combinations are prevented), wiki-sourced tooltips
-on every control, a sliding log drawer with right-click "Open in File Explorer" on paths,
-and an OS-following light/dark theme with override.
+### Not everything is in the GUI
 
-SabreTools Studio is fully portable: all settings and presets live in a single
-`SabreToolsStudio.config` file next to the executable - no registry, no user-profile
-folders. Output files default to the application folder when no output directory is set.
+Studio covers the seven primary SabreTools features listed above, but it is **not** a
+complete replacement for the command line tool. SabreTools offers additional switches,
+special values, and behaviors that Studio does not expose. If you need something you can't
+find in the app, check the [SabreTools Wiki](https://github.com/SabreTools/SabreTools/wiki)
+and run the bundled CLI directly from the `sabretools` folder — the command preview bar in
+Studio is a great starting point for building your own commands.
 
-Note: the local SabreTools checkout carries uncommitted patches for Zstandard zip
-reading and writing (`--zstd-zip`); the bundled CLI is built from that patched tree.
+## Zstandard archive support
 
-## Building
+If your collections are compressed with **Zstandard zips** (as produced by RomVault's ZSTD
+mode or 7-Zip-Zstandard), Studio's bundled SabreTools build reads them natively for
+scanning, verification, and rebuilding. On the Sort/Rebuild page you can also **write**
+Zstandard zips, or recompress a zstd collection to standard TorrentZip. Note that plain
+7-Zip cannot open zstd archives — use 7-Zip-Zstandard or RomVault.
 
-Requires the .NET 10 SDK (matching upstream SabreTools) and a sibling checkout of the
-SabreTools repository (`../SabreTools` relative to this repo). After cloning SabreTools,
-remember to run `git submodule update --init` inside it — SabreTools.Serialization is a submodule.
+## Using the app
+
+1. **Pick a feature** in the left sidebar.
+2. **Add your inputs** — click the Add buttons or just drag and drop files/folders onto the lists.
+3. **Set your options.** Hover anything you're unsure about. Options that don't apply to
+   your current selections are disabled automatically, so you can't build an invalid command.
+4. **Watch the command bar** at the bottom — it always shows the exact SabreTools command
+   Studio will run. The copy button puts it on your clipboard.
+5. **Click Run.** The log drawer slides up and streams the tool's output live. Collapse it
+   with the chevron; it stays out of your way as a one-line status strip. You can cancel a
+   running operation at any time.
+
+Tips worth knowing:
+
+- **Presets:** every feature page has a preset bar at the top right. Type a name and hit the
+  save button to store the page's entire setup (including input lists); pick it from the
+  dropdown to restore it later. Presets live in `SabreToolsStudio.config`.
+- **Log paths:** highlight any file or folder path in the log, right-click, and choose
+  **Open in File Explorer** to jump straight to it.
+- **Your own SabreTools:** by default Studio uses its bundled copy, but you can point it at
+  any other SabreTools executable under **Settings**.
+- **Theme:** follows your OS light/dark preference; override it under **Settings**.
+
+## Requirements
+
+- **Windows:** Windows 10/11 x64. Nothing else — the app is self-contained.
+- **Linux:** x64 with an X11 or Wayland desktop. Mark the binary executable after copying
+  (`chmod +x SabreToolsStudio`).
+
+## Building from source
+
+You need the .NET 10 SDK and a checkout of the SabreTools repository sitting next to this
+one (`../SabreTools`). After cloning SabreTools, run `git submodule update --init` inside it.
 
 ```
-# 1. Publish the SabreTools CLI into tools/sabretools (bundled with the GUI)
+# Publish the SabreTools CLI into tools/sabretools (bundled with the GUI)
 ./build-cli.ps1        # Windows
 ./build-cli.sh         # Linux
 
-# 2. Build and run the GUI
+# Build and run the GUI
 dotnet run --project src/SabreToolsStudio
 ```
 
-A different SabreTools executable can be selected at runtime on the Settings page.
+### Distributable builds
 
-## Distributable builds
-
-Self-contained single-file builds (no .NET install required on the target machine):
+Self-contained single-file builds, ready to zip and share:
 
 ```
 ./publish-win.ps1      # -> dist/win-x64
 ./publish-linux.sh     # -> dist/linux-x64
 ```
 
-## License
+Each script bundles a self-contained SabreTools CLI for the target platform, so the output
+folder works on machines with no .NET runtime installed.
 
-MIT, matching SabreTools itself.
+## Credits and license
+
+- **SabreTools** is by Matt Nadareski — [github.com/SabreTools/SabreTools](https://github.com/SabreTools/SabreTools) (MIT license)
+- **SabreTools Studio** GUI by Eggman, built with [Avalonia UI](https://avaloniaui.net/) (MIT license)
+- TorrentZip/zip handling within SabreTools derives from the RomVault project's Compress library

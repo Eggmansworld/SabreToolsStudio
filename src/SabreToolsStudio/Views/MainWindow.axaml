@@ -72,6 +72,22 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+
+                        <TextBlock Classes="navGroup" Text="HELP"/>
+                        <Button Classes="navLink" Click="OnOpenWikiClick"
+                                ToolTip.Tip="Open the SabreTools wiki in your browser - the full documentation for every feature and option">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <PathIcon Data="{x:Static root:Icons.BookOpen}" Width="15" Height="15"/>
+                                <TextBlock Text="SabreTools Wiki" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="navLink" Click="OnOpenRepoClick"
+                                ToolTip.Tip="Open the original SabreTools project on GitHub in your browser">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <PathIcon Data="{x:Static root:Icons.GitHub}" Width="15" Height="15"/>
+                                <TextBlock Text="SabreTools on GitHub" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
 
                     <StackPanel Margin="10,8,10,0">
