@@ -22,7 +22,6 @@ public partial class SettingsViewModel : ViewModelBase
 
         SelectedTheme = settings.Current.Theme is "Light" or "Dark" ? settings.Current.Theme : "System";
         SabreToolsPath = settings.Current.SabreToolsPath ?? "";
-        ThreadsText = settings.Current.Threads?.ToString() ?? "";
         SelectedLogLevel = LogLevels.Contains(settings.Current.LogLevel) ? settings.Current.LogLevel : "verbose";
         _loading = false;
     }
@@ -37,9 +36,6 @@ public partial class SettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _sabreToolsPath = "";
-
-    [ObservableProperty]
-    private string _threadsText = "";
 
     [ObservableProperty]
     private string _selectedLogLevel = "verbose";
@@ -79,15 +75,6 @@ public partial class SettingsViewModel : ViewModelBase
         _settings.Current.SabreToolsPath = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
         _settings.Save();
         OnPropertyChanged(nameof(ResolvedPathDisplay));
-    }
-
-    partial void OnThreadsTextChanged(string value)
-    {
-        if (_loading)
-            return;
-
-        _settings.Current.Threads = int.TryParse(value, out int threads) && threads > 0 ? threads : null;
-        _settings.Save();
     }
 
     partial void OnSelectedLogLevelChanged(string value)

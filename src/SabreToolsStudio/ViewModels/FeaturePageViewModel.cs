@@ -57,8 +57,6 @@ public abstract partial class FeaturePageViewModel : ViewModelBase
         var args = new List<string> { Flag, "--script" };
 
         AppSettings s = _settings.Current;
-        if (s.Threads is int threads and > 0)
-            args.Add($"--threads={threads}");
         if (!string.IsNullOrWhiteSpace(s.LogLevel) && s.LogLevel != "verbose")
             args.Add($"--log-level={s.LogLevel}");
 

@@ -13,9 +13,6 @@ public sealed class AppSettings
     /// <summary>Optional user override for the SabreTools executable path; null uses the bundled copy</summary>
     public string? SabreToolsPath { get; set; }
 
-    /// <summary>Optional thread count passed to all operations (--threads=)</summary>
-    public int? Threads { get; set; }
-
     /// <summary>Lowest log level passed to all operations (--log-level=)</summary>
     public string LogLevel { get; set; } = "verbose";
 }

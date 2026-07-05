@@ -50,19 +50,12 @@
             <Border Classes="card">
                 <StackPanel Spacing="10">
                     <TextBlock Classes="sectionHeader" Text="Global CLI Options"/>
-                    <Grid ColumnDefinitions="*,20,*">
-                        <StackPanel Grid.Column="0" Spacing="4">
-                            <TextBlock Text="Threads" FontSize="12"/>
-                            <TextBox Text="{Binding ThreadsText}" Watermark="Default: machine threads"
-                                     ToolTip.Tip="Set the number of threads to use for the multithreaded operations. The default is the number of available machine threads. Leave blank for the default."/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Spacing="4">
-                            <TextBlock Text="Log level" FontSize="12"/>
-                            <ComboBox ItemsSource="{Binding LogLevels}" SelectedItem="{Binding SelectedLogLevel}"
-                                      HorizontalAlignment="Stretch"
-                                      ToolTip.Tip="Set the lowest log level for output: verbose shows all logs, user hides verbose logs, warning shows only warnings and errors, error shows only errors."/>
-                        </StackPanel>
-                    </Grid>
+                    <StackPanel Spacing="4" MaxWidth="330" HorizontalAlignment="Left">
+                        <TextBlock Text="Log level" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding LogLevels}" SelectedItem="{Binding SelectedLogLevel}"
+                                  HorizontalAlignment="Stretch"
+                                  ToolTip.Tip="Set the lowest log level for output: verbose shows all logs, user hides verbose logs, warning shows only warnings and errors, error shows only errors."/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 
