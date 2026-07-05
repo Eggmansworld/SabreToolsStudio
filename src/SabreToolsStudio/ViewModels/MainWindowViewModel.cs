@@ -24,16 +24,14 @@ public partial class MainWindowViewModel : ViewModelBase
         var verify = new VerifyViewModel(settings, _presetService);
         var sort = new SortViewModel(settings, _presetService);
         var split = new SplitViewModel(settings, _presetService);
+        var update = new UpdateViewModel(settings, _presetService);
 
         PrimaryNav =
         [
             new("dfd", "DAT From Dir", Icons.FolderPlus, datFromDir, Navigate),
             new("sort", "Sort / Rebuild", Icons.SwapHorizontal, sort, Navigate),
             new("verify", "Verify", Icons.CheckCircle, verify, Navigate),
-            new("update", "Update DATs", Icons.Update,
-                new PlaceholderViewModel("Update and Manipulate DATs",
-                    "The multitool: convert, merge, diff, filter, dedupe, and rewrite DAT files in nearly any way imaginable.",
-                    4, Icons.Update), Navigate),
+            new("update", "Update DATs", Icons.Update, update, Navigate),
             new("split", "Split DATs", Icons.CallSplit, split, Navigate),
             new("stats", "Statistics", Icons.ChartBar, statistics, Navigate),
             new("batch", "Batch", Icons.PlaylistPlay,

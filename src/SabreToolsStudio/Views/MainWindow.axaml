@@ -28,6 +28,9 @@
         <DataTemplate DataType="{x:Type vm:SplitViewModel}">
             <pages:SplitView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:UpdateViewModel}">
+            <pages:UpdateView/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <pages:SettingsView/>
         </DataTemplate>

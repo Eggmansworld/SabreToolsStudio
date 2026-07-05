@@ -99,6 +99,30 @@ public static class OptionCatalog
         new("--dat-full-non-merged", "Fully Non-Merged", "Child sets contain all items from parents and device references; every set is fully self-contained."),
     ];
 
+    /// <summary>Deduplication modes for Update; the two flags are mutually exclusive</summary>
+    public static readonly IReadOnlyList<ComboOption> DedupModes =
+    [
+        new("", "No deduplication (default)", "Items are output exactly as they appear in the input DATs."),
+        new("--dedup", "Dedup across the whole DAT", "Hash-based deduping across the entire output so there are effectively no duplicates anywhere in the file."),
+        new("--game-dedup", "Dedup within each game", "Hash-based deduping only within each game, so there are no duplicates inside any single set but items may repeat across sets."),
+    ];
+
+    /// <summary>Cascaded diffing modes for Update; the two flags are mutually exclusive</summary>
+    public static readonly IReadOnlyList<ComboOption> CascadeModes =
+    [
+        new("", "No cascade (default)", "No cascaded diffing is performed."),
+        new("--diff-cascade", "Cascade (first DAT is base)", "The first DAT is the base; each additional input DAT keeps only the files not in any previous DAT. Useful for rollback sets or reducing cross-set duplicates."),
+        new("--diff-reverse-cascade", "Reverse cascade (last DAT is base)", "The last DAT is the base; each additional input DAT keeps only the files not in any previous DAT, processed in reverse."),
+    ];
+
+    /// <summary>Base replacement modes for Update; the two flags are mutually exclusive</summary>
+    public static readonly IReadOnlyList<ComboOption> BaseReplaceModes =
+    [
+        new("", "No replacement (default)", "No fields are replaced from base DATs."),
+        new("--base-replace", "Replace from base DATs in order", "Use the base DATs as replacements for all input DATs. The first found instance of an item in the base DAT(s) is used. Defaults to updating names if no update fields are given."),
+        new("--reverse-base-replace", "Replace from base DATs in reverse", "Use the base DATs as replacements for all input DATs, processed in reverse. The first found instance in the last base DAT(s) is used. Defaults to updating names if no update fields are given."),
+    ];
+
     /// <summary>Values for the forcemerging header tag</summary>
     public static readonly IReadOnlyList<ComboOption> ForceMergingModes =
     [

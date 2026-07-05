@@ -1,0 +1,438 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:controls="using:SabreToolsStudio.Views.Controls"
+             x:Class="SabreToolsStudio.Views.Pages.UpdateView"
+             x:DataType="vm:UpdateViewModel">
+
+    <DockPanel Margin="28,24,28,16">
+
+        <!-- Header -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                <TextBlock Classes="pageTitle" Text="{Binding Title}"/>
+                <TextBlock Classes="subtle" Text="{Binding Description}"/>
+            </StackPanel>
+            <controls:PresetBar Grid.Column="1" VerticalAlignment="Top"/>
+        </Grid>
+
+        <TabControl Padding="0,12,0,0">
+
+            <!-- ============ INPUTS & OUTPUT TAB ============ -->
+            <TabItem Header="Inputs &amp; Output">
+                <Grid ColumnDefinitions="*,20,400">
+                    <Border Grid.Column="0" Classes="card">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Classes="sectionHeader" Text="Input DATs"/>
+                            <controls:PathListEditor ItemsSource="{Binding Inputs}"
+                                                     PickerTitle="Select DAT files"
+                                                     EmptyText="No inputs yet. Add DAT files (or folders of DATs) to update or convert."/>
+                        </DockPanel>
+                    </Border>
+
+                    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,0">
+                    <StackPanel Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Output Formats"/>
+                                <TextBlock Classes="subtle" FontSize="12"
+                                           Text="Formats to write. If none are selected, each input DAT's own format is used."/>
+                                <Border BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="4">
+                                    <ScrollViewer Height="150" VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding OutputFormats}" Margin="8,6">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type vm:FormatOption}">
+                                                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Label}"
+                                                              ToolTip.Tip="{Binding Description}" Margin="0,0,0,2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
+                                <CheckBox IsChecked="{Binding Deprecated}" Content="Use older 'game' tag in XML"
+                                          IsEnabled="{Binding IsXmlSelected}"
+                                          ToolTip.Tip="Requires the Logiqx XML output format. Outputs the older 'game' tag instead of 'machine', for compatibility."/>
+                                <Grid ColumnDefinitions="Auto,12,*" IsEnabled="{Binding HasFormatSelected}">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Romba}" Content="Romba depot"
+                                              ToolTip.Tip="Requires an output format. Read and write DATs to and from a Romba-style depot structure."/>
+                                    <TextBox Grid.Column="2" Text="{Binding RombaDepth}" Watermark="Depth (default 4)"
+                                             IsEnabled="{Binding Romba}"
+                                             ToolTip.Tip="Optionally set the depth of output depots. Defaults to 4 levels deep."/>
+                                </Grid>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Output directory" FontSize="12"/>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools folder"
+                                                 Margin="0,0,8,0"
+                                                 ToolTip.Tip="This sets an output folder to be used when the files are created. If a path is not defined, the runtime directory is used instead."/>
+                                        <Button Grid.Column="1" Click="OnBrowseOutputClick" Content="Browse"
+                                                ToolTip.Tip="Choose the folder where updated DATs will be written"/>
+                                    </Grid>
+                                </StackPanel>
+                                <CheckBox IsChecked="{Binding Inplace}" Content="Write next to input DATs"
+                                          ToolTip.Tip="Write output files to the directory the input DATs came from instead of the output directory."/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card" IsEnabled="{Binding HasFormatSelected}">
+                            <StackPanel Spacing="8"
+                                        ToolTip.Tip="These options require at least one output format to be selected. The line-based options (prefix, postfix, quotes, rom names, game prefix) are primarily for the Missfile format.">
+                                <TextBlock Classes="sectionHeader" Text="Item Naming (Missfile and text formats)"/>
+                                <Grid ColumnDefinitions="*,10,*">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Line prefix" FontSize="12"/>
+                                        <TextBox Text="{Binding Prefix}"
+                                                 ToolTip.Tip="Set a generic prefix to be prepended to all outputted lines. Supports special replacement strings; see the Special Values page of the SabreTools wiki."/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Spacing="4">
+                                        <TextBlock Text="Line postfix" FontSize="12"/>
+                                        <TextBox Text="{Binding Postfix}"
+                                                 ToolTip.Tip="Set a generic postfix to be appended to all outputted lines. Supports special replacement strings; see the Special Values page of the SabreTools wiki."/>
+                                    </StackPanel>
+                                </Grid>
+                                <CheckBox IsChecked="{Binding Quotes}" Content="Double-quote each item"
+                                          ToolTip.Tip="Requires the Missfile output format. Surrounds each item with double quotes, not including the prefix or postfix."/>
+                                <CheckBox IsChecked="{Binding RomsInMiss}" Content="Output rom names instead of set names"
+                                          ToolTip.Tip="Requires the Missfile output format. Outputs the name of each rom instead of the name of the game."/>
+                                <CheckBox IsChecked="{Binding GamePrefix}" Content="Add game name as a prefix"
+                                          ToolTip.Tip="Requires the Missfile output format. Uses the name of the game as a prefix to each file."/>
+                                <Grid ColumnDefinitions="*,10,*">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Add extension" FontSize="12"/>
+                                        <TextBox Text="{Binding AddExtension}" Watermark="e.g. .bin"
+                                                 ToolTip.Tip="Add a postfix extension to each full item name."/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Spacing="4">
+                                        <TextBlock Text="Replace extensions with" FontSize="12"/>
+                                        <TextBox Text="{Binding ReplaceExtension}" Watermark="e.g. .rom"
+                                                 ToolTip.Tip="When an extension exists, replace it with the provided one instead."/>
+                                    </StackPanel>
+                                </Grid>
+                                <CheckBox IsChecked="{Binding RemoveExtensions}" Content="Remove all extensions"
+                                          ToolTip.Tip="For each item, remove the extension from the name."/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ============ DAT HEADER TAB ============ -->
+            <TabItem Header="DAT Header">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="16" MaxWidth="900" HorizontalAlignment="Left">
+                    <Border Classes="card">
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="sectionHeader" Text="Header Fields"/>
+                            <TextBlock Classes="subtle" FontSize="12"
+                                       Text="All fields are optional. Anything left blank keeps the value from the input DAT."/>
+                            <Grid ColumnDefinitions="Auto,8,*,24,Auto,8,*" RowDefinitions="Auto,8,Auto,8,Auto,8,Auto,8,Auto,8,Auto">
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Filename" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding DatFilename}"
+                                         ToolTip.Tip="Set the external filename for the output DAT(s)."/>
+                                <TextBlock Grid.Row="0" Grid.Column="4" Text="Name" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="0" Grid.Column="6" Text="{Binding DatName}"
+                                         ToolTip.Tip="Set the name header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Description" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding DatDescription}"
+                                         ToolTip.Tip="Set the description header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="2" Grid.Column="4" Text="Category" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding DatCategory}"
+                                         ToolTip.Tip="Set the category header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Version" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding DatVersion}"
+                                         ToolTip.Tip="Set the version header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="4" Grid.Column="4" Text="Date" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="4" Grid.Column="6" Text="{Binding DatDate}"
+                                         ToolTip.Tip="Set the date header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Author" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding DatAuthor}"
+                                         ToolTip.Tip="Set the author header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="6" Grid.Column="4" Text="Email" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="6" Grid.Column="6" Text="{Binding DatEmail}"
+                                         ToolTip.Tip="Set the email header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Homepage" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding DatHomepage}"
+                                         ToolTip.Tip="Set the homepage header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="8" Grid.Column="4" Text="URL" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="8" Grid.Column="6" Text="{Binding DatUrl}"
+                                         ToolTip.Tip="Set the URL header field for the output DAT(s)."/>
+
+                                <TextBlock Grid.Row="10" Grid.Column="0" Text="Comment" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="10" Grid.Column="2" Text="{Binding DatComment}"
+                                         ToolTip.Tip="Set the comment header field for the output DAT(s)."/>
+                                <TextBlock Grid.Row="10" Grid.Column="4" Text="Root dir" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBox Grid.Row="10" Grid.Column="6" Text="{Binding DatRoot}"
+                                         ToolTip.Tip="Set the rootdir (as used by SuperDAT mode) for the output DAT(s)."/>
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,12,*">
+                                <CheckBox Grid.Column="0" IsChecked="{Binding UseHeaderSkipper}" Content="Copier header skipper"
+                                          ToolTip.Tip="Set the header special field for the output DAT(s). Leave the name blank for all known skippers, or enter a specific one such as fds.xml."/>
+                                <TextBox Grid.Column="2" Text="{Binding HeaderSkipper}" Watermark="Skipper name (blank = all)"
+                                         IsEnabled="{Binding UseHeaderSkipper}"
+                                         ToolTip.Tip="Specific copier header skipper to use, such as fds.xml. Blank means all known skippers are tried."/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="sectionHeader" Text="Type and Force Tags"/>
+                            <CheckBox IsChecked="{Binding SuperDat}" Content="SuperDAT mode"
+                                      ToolTip.Tip="Set the type flag to SuperDAT for the output DAT(s)."/>
+                            <Grid ColumnDefinitions="*,16,*,16,*">
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="Force merging" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding ForceMergingModes}" SelectedItem="{Binding ForceMerging}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Set the forcemerging tag in the DAT header, instructing ROM managers how to merge sets.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="4">
+                                    <TextBlock Text="Force nodump" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding ForceNodumpModes}" SelectedItem="{Binding ForceNodump}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Set the forcenodump tag in the DAT header, instructing ROM managers how to handle nodump entries.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4" Spacing="4">
+                                    <TextBlock Text="Force packing" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding ForcePackingModes}" SelectedItem="{Binding ForcePacking}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Set the forcepacking tag in the DAT header, instructing ROM managers how to pack rebuilt sets.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============ MERGE & DIFF TAB ============ -->
+            <TabItem Header="Merge &amp; Diff">
+                <Grid ColumnDefinitions="*,20,*" MaxWidth="1150" HorizontalAlignment="Left">
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,0">
+                    <StackPanel Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Combining"/>
+                                <CheckBox IsChecked="{Binding ModeMerge}" Content="Merge all input DATs into one"
+                                          ToolTip.Tip="All input DATs are merged into a single output instead of being processed individually. Best used with a deduplication mode."/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Deduplication" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding DedupModes}" SelectedItem="{Binding DedupMode}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Hash-based deduplication applied to the output DAT(s).">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <CheckBox IsChecked="{Binding NoAutomaticDate}" Content="Don't include date in output file name"
+                                          ToolTip.Tip="Applies to merge and diff modes. Normally the output DAT is created with the date in the file name in brackets; this removes it."/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Base DATs"/>
+                                <TextBlock Classes="subtle" FontSize="12"
+                                           Text="Used by 'Diff against base' and the base replacement modes. Required when either is enabled."/>
+                                <controls:PathListEditor ItemsSource="{Binding BaseDats}" MinHeight="140"
+                                                         PickerTitle="Select base DAT files"
+                                                         EmptyText="No base DATs. Add DAT files (or folders of DATs) to use as the comparison or replacement base."/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,0">
+                    <StackPanel Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Diffing"/>
+                                <CheckBox IsChecked="{Binding DiffAll}" Content="Diff all (duplicates, no-duplicates, individuals)"
+                                          ToolTip.Tip="Input DATs are diffed against each other to find duplicates, no duplicates, and only-in-individuals, producing all standard outputs."/>
+                                <CheckBox IsChecked="{Binding DiffDuplicates}" Content="Diffdat of duplicates only"
+                                          ToolTip.Tip="All files that have duplicates outside of the original DAT are included."/>
+                                <CheckBox IsChecked="{Binding DiffIndividuals}" Content="Diffdats per individual DAT"
+                                          ToolTip.Tip="All files that have no duplicates outside of the original DATs are put into DATs named after the source DAT."/>
+                                <CheckBox IsChecked="{Binding DiffNoDuplicates}" Content="Diffdat of no-duplicates only"
+                                          ToolTip.Tip="All files that have no duplicates outside of the original DATs are included."/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Cascaded diffing" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding CascadeModes}" SelectedItem="{Binding CascadeMode}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Special diffing where one DAT is the base and each additional input keeps only files not seen before. Useful for rollback sets.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <CheckBox IsChecked="{Binding SkipFirstOutput}" Content="Skip output of first DAT"
+                                          IsEnabled="{Binding IsCascadeSelected}"
+                                          ToolTip.Tip="Requires cascaded diffing. When the first DAT does not need to be written out a second time, skipping it can speed up the output process."/>
+                                <CheckBox IsChecked="{Binding DiffAgainst}" Content="Diff all inputs against base DATs"
+                                          ToolTip.Tip="Use a set of base DATs as a comparison point for each input DAT, heavily influenced by the Romba diffing model. Requires base DATs."/>
+                                <CheckBox IsChecked="{Binding ByGame}" Content="Diff against by game instead of hashes"
+                                          IsEnabled="{Binding DiffAgainst}"
+                                          ToolTip.Tip="Requires 'Diff against base'. Uses each game as the comparison point instead of hashes."/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Base Replacement"/>
+                                <ComboBox ItemsSource="{Binding BaseReplaceModes}" SelectedItem="{Binding BaseReplaceMode}"
+                                          HorizontalAlignment="Stretch"
+                                          ToolTip.Tip="Replace item fields in the input DATs using values from the base DATs. Requires base DATs.">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                            <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <StackPanel Spacing="4" IsEnabled="{Binding IsBaseReplaceSelected}">
+                                    <TextBlock Text="Fields to update (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding UpdateFields}" AcceptsReturn="True" Height="70" TextWrapping="Wrap"
+                                             Watermark="item.name&#x0a;machine.description"
+                                             ToolTip.Tip="Update any valid item or machine field from the base DAT(s), one field per line. Defaults to names if left empty. See the Fields page of the SabreTools wiki."/>
+                                    <CheckBox IsChecked="{Binding OnlySame}" Content="Only update description if it matches machine name"
+                                              ToolTip.Tip="Requires update fields. Descriptions are only overwritten if they are the same as the machine names."/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- ============ CLEANING & FILTERING TAB ============ -->
+            <TabItem Header="Cleaning &amp; Filtering">
+                <Grid ColumnDefinitions="*,20,*" MaxWidth="1150" HorizontalAlignment="Left">
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,0">
+                    <StackPanel Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="sectionHeader" Text="Name Cleaning"/>
+                                <CheckBox IsChecked="{Binding Clean}" Content="Clean game names to WoD standards"
+                                          ToolTip.Tip="Game names are sanitized to remove what the original WoD standards deemed unneeded information, such as parenthesized or bracketed strings."/>
+                                <CheckBox IsChecked="{Binding RemoveUnicode}" Content="Remove Unicode characters from names"
+                                          ToolTip.Tip="Removes all Unicode characters from item names, machine names, and machine descriptions."/>
+                                <CheckBox IsChecked="{Binding DescriptionAsName}" Content="Use description instead of machine name"
+                                          ToolTip.Tip="Machine names in the DAT are replaced by the machine description. Notably useful for software list DATs where names are DOS-friendly but descriptions are complete."/>
+                                <CheckBox IsChecked="{Binding SceneDateStrip}" Content="Strip dates from scene names"
+                                          ToolTip.Tip="Sets with scene names will have the date removed from the beginning. For example, 01.01.01-Game_Name-GROUP becomes Game_Name-GROUP."/>
+                                <CheckBox IsChecked="{Binding KeepEmptyGames}" Content="Keep originally empty sets"
+                                          ToolTip.Tip="Normally, sets that are considered empty are not included in the output; this keeps them."/>
+                                <CheckBox IsChecked="{Binding SingleSet}" Content="Single set: all game names become '!'"
+                                          ToolTip.Tip="Useful for keeping all roms in a DAT in the same archive or folder."/>
+                                <Grid ColumnDefinitions="Auto,12,*">
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding Trim}" Content="Trim names to NTFS length"
+                                              ToolTip.Tip="For files that would have too long a name, trims the name to the NTFS maximum length at most."/>
+                                    <TextBox Grid.Column="2" Text="{Binding TrimRootDir}" Watermark="Root dir for length calc"
+                                             IsEnabled="{Binding Trim}"
+                                             ToolTip.Tip="If files will not be stored from the root directory, set a new root for path length calculations."/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Set Structure"/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="DAT merge preprocessing" FontSize="12"/>
+                                    <ComboBox ItemsSource="{Binding MergeModes}" SelectedItem="{Binding MergeMode}"
+                                              HorizontalAlignment="Stretch"
+                                              ToolTip.Tip="Preprocess each DAT into a specific merge structure (split, merged, non-merged, etc.) before output. See the Merging page of the SabreTools wiki.">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ComboOption}">
+                                                <TextBlock Text="{Binding Label}" ToolTip.Tip="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <CheckBox IsChecked="{Binding OneRomPerGame}" Content="One rom per game"
+                                          ToolTip.Tip="Output each rom to its own game as a subfolder of the original parent."/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="One Game Per Region (1G1R)"/>
+                                <CheckBox IsChecked="{Binding OneGamePerRegion}" Content="Keep one game per region"
+                                          ToolTip.Tip="Use an ordered list of regions so only one game from each set of parent and clones is included. Requires cloneof or romof tags."/>
+                                <StackPanel Spacing="4" IsEnabled="{Binding OneGamePerRegion}">
+                                    <TextBlock Text="Regions, in priority order (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding Regions}" AcceptsReturn="True" Height="80" TextWrapping="Wrap"
+                                             Watermark="USA&#x0a;Europe&#x0a;Japan"
+                                             ToolTip.Tip="Add regions in priority order for 1G1R filtering. If none are supplied, only parent sets are included."/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,0">
+                    <StackPanel Spacing="16">
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="sectionHeader" Text="Field Filters"/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Filters (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding Filters}" AcceptsReturn="True" Height="80" TextWrapping="Wrap"
+                                             Watermark="machine.name:^.*?\(.*Europe.*\)$"
+                                             ToolTip.Tip="Filter any valid item or machine field from inputs, one filter per line. See the Filters page of the SabreTools wiki for the full syntax."/>
+                                </StackPanel>
+                                <CheckBox IsChecked="{Binding MatchOfTags}" Content="Match cloneof/romof tags in name filters"
+                                          ToolTip.Tip="Requires at least one filter. Allows game-name filters to also be checked against the romof and cloneof tags."/>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Exclude fields (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding ExcludeFields}" AcceptsReturn="True" Height="60" TextWrapping="Wrap"
+                                             Watermark="item.date"
+                                             ToolTip.Tip="Exclude any valid item or machine field from outputs, one field per line. See the Fields page of the SabreTools wiki for valid names."/>
+                                </StackPanel>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="MAME Extra INIs (one per line)" FontSize="12"/>
+                                    <TextBox Text="{Binding ExtraInis}" AcceptsReturn="True" Height="60" TextWrapping="Wrap"
+                                             Watermark="machine.category:C:\path\to\catlist.ini"
+                                             ToolTip.Tip="Apply any valid MAME INI for any valid field in the DAT, one entry per line. See the Extras page of the SabreTools wiki for details."/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</UserControl>
