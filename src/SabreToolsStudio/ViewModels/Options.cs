@@ -81,6 +81,7 @@ public static class OptionCatalog
     [
         new("", "Uncompressed folders (default)", "Files are rebuilt into plain, uncompressed folders in the output directory."),
         new("--torrent-zip", "TorrentZip", "Files are rebuilt to TorrentZip (TZip) files: ZIP archives with standardized header information so identical content always produces byte-identical archives. Widely used by RomVault and other ROM managers."),
+        new("--zstd-zip", "Zstandard Zip", "Files are rebuilt to ZIP files compressed with Zstandard (compression method 93), the same scheme used by RomVault's ZSTD mode and 7-Zip-Zstandard. Better compression than Deflate, but requires zstd-aware tools to open."),
         new("--torrent-gzip", "TorrentGZ", "Files are rebuilt to TorrentGZ (TGZ) files: GZip archives with standardized headers, named by the SHA-1 of the contained file. Primarily used by Romba-style depots."),
         new("--tar", "TAR", "Files are rebuilt to Tape ARchive (TAR) files: a standardized, uncompressed container format widely used in backup applications."),
         new("--torrent-7zip", "Torrent7Zip", "Files are rebuilt to Torrent7Zip (T7Z) files, based on the 7Zip LZMA container. Note: this currently does not produce proper Torrent-compatible outputs."),
