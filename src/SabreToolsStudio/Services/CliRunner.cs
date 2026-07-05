@@ -31,7 +31,8 @@ public sealed class CliRunner
             CreateNoWindow = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
-            WorkingDirectory = Path.GetDirectoryName(exePath) ?? AppContext.BaseDirectory,
+            // Run relative to the Studio application folder, not the CLI's own folder
+            WorkingDirectory = AppContext.BaseDirectory,
         };
         foreach (string arg in arguments)
             psi.ArgumentList.Add(arg);

@@ -68,8 +68,7 @@ public partial class StatisticsViewModel : FeaturePageViewModel
 
         if (!string.IsNullOrWhiteSpace(Filename))
             yield return $"--filename={Filename.Trim()}";
-        if (!string.IsNullOrWhiteSpace(OutputDir))
-            yield return $"--output-dir={OutputDir.Trim()}";
+        yield return $"--output-dir={ResolveOutputDir(OutputDir)}";
 
         if (BaddumpColumn)
             yield return "--baddump-column";

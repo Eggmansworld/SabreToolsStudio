@@ -9,13 +9,14 @@ namespace SabreToolsStudio.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly SettingsService _settings;
-    private readonly PresetService _presetService = new();
+    private readonly PresetService _presetService;
     private readonly SabreToolsLocator _locator;
     private readonly CliRunner _runner = new();
 
     public MainWindowViewModel(SettingsService settings)
     {
         _settings = settings;
+        _presetService = new PresetService(settings);
         _locator = new SabreToolsLocator(settings);
         LogDrawer = new LogDrawerViewModel(_runner);
 
@@ -42,6 +43,13 @@ public partial class MainWindowViewModel : ViewModelBase
         [
             new("settings", "Settings", Icons.Cog, new SettingsViewModel(settings, _locator), Navigate),
         ];
+
+        // Route page status messages (preset saves, etc.) into the log drawer
+        foreach (NavItemViewModel item in PrimaryNav)
+        {
+            if (item.Page is FeaturePageViewModel featurePage)
+                featurePage.StatusLog = LogDrawer.ReportInfo;
+        }
 
         Navigate(PrimaryNav.First(item => item.Key == "dfd"));
     }

@@ -44,6 +44,9 @@ public partial class SettingsViewModel : ViewModelBase
     public string ResolvedPathDisplay =>
         _locator.Resolve() ?? "No SabreTools executable found - set a path above or reinstall.";
 
+    /// <summary>Where all settings and presets are stored, for display</summary>
+    public static string ConfigPathDisplay => SettingsService.ConfigPath;
+
     public static void ApplyTheme(string theme)
     {
         if (Application.Current is not null)

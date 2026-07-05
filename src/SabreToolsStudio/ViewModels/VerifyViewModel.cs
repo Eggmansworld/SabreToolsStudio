@@ -84,8 +84,7 @@ public partial class VerifyViewModel : FeaturePageViewModel
         foreach (string dat in Dats)
             yield return $"--dat={dat}";
 
-        if (!string.IsNullOrWhiteSpace(OutputDir))
-            yield return $"--output-dir={OutputDir.Trim()}";
+        yield return $"--output-dir={ResolveOutputDir(OutputDir)}";
 
         if (HashOnly)
             yield return "--hash-only";

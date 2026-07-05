@@ -56,6 +56,11 @@
                                   HorizontalAlignment="Stretch"
                                   ToolTip.Tip="Set the lowest log level for output: verbose shows all logs, user hides verbose logs, warning shows only warnings and errors, error shows only errors."/>
                     </StackPanel>
+                    <StackPanel Spacing="2" Margin="0,8,0,0">
+                        <TextBlock Text="Settings and presets are stored in" FontSize="12"/>
+                        <SelectableTextBlock Text="{Binding ConfigPathDisplay}" FontSize="12"
+                                             Foreground="{DynamicResource AppSubtleTextBrush}"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

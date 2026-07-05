@@ -469,8 +469,7 @@ public partial class UpdateViewModel : FeaturePageViewModel
         foreach (string ini in SplitMultiline(ExtraInis))
             yield return $"--extra-ini={ini}";
 
-        if (!string.IsNullOrWhiteSpace(OutputDir))
-            yield return $"--output-dir={OutputDir.Trim()}";
+        yield return $"--output-dir={ResolveOutputDir(OutputDir)}";
         if (Inplace)
             yield return "--inplace";
     }

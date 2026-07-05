@@ -100,8 +100,7 @@ public partial class SortViewModel : FeaturePageViewModel
         foreach (string dat in Dats)
             yield return $"--dat={dat}";
 
-        if (!string.IsNullOrWhiteSpace(OutputDir))
-            yield return $"--output-dir={OutputDir.Trim()}";
+        yield return $"--output-dir={ResolveOutputDir(OutputDir)}";
 
         if (RebuildFormat.Value.Length > 0)
             yield return RebuildFormat.Value;

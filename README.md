@@ -21,7 +21,12 @@ All seven primary SabreTools features are available:
 
 Plus: named option presets per feature, live CLI command preview with copy-to-clipboard,
 dependency-aware options (invalid flag combinations are prevented), wiki-sourced tooltips
-on every control, a sliding log drawer, and an OS-following light/dark theme with override.
+on every control, a sliding log drawer with right-click "Open in File Explorer" on paths,
+and an OS-following light/dark theme with override.
+
+SabreTools Studio is fully portable: all settings and presets live in a single
+`SabreToolsStudio.config` file next to the executable - no registry, no user-profile
+folders. Output files default to the application folder when no output directory is set.
 
 Note: the local SabreTools checkout carries uncommitted patches for Zstandard zip
 reading and writing (`--zstd-zip`); the bundled CLI is built from that patched tree.

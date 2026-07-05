@@ -147,8 +147,7 @@ public partial class SplitViewModel : FeaturePageViewModel
         if (Deprecated && IsXmlSelected)
             yield return "--deprecated";
 
-        if (!string.IsNullOrWhiteSpace(OutputDir))
-            yield return $"--output-dir={OutputDir.Trim()}";
+        yield return $"--output-dir={ResolveOutputDir(OutputDir)}";
         if (Inplace)
             yield return "--inplace";
     }

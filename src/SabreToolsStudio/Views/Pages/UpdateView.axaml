@@ -63,9 +63,9 @@
                                 <StackPanel Spacing="4">
                                     <TextBlock Text="Output directory" FontSize="12"/>
                                     <Grid ColumnDefinitions="*,Auto">
-                                        <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools folder"
+                                        <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools Studio folder"
                                                  Margin="0,0,8,0"
-                                                 ToolTip.Tip="This sets an output folder to be used when the files are created. If a path is not defined, the runtime directory is used instead."/>
+                                                 ToolTip.Tip="Where output files are written. If left blank, the folder containing SabreToolsStudio is used."/>
                                         <Button Grid.Column="1" Click="OnBrowseOutputClick" Content="Browse"
                                                 ToolTip.Tip="Choose the folder where updated DATs will be written"/>
                                     </Grid>

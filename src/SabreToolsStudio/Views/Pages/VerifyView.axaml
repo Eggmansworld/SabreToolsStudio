@@ -99,9 +99,9 @@
                         <StackPanel Spacing="4">
                             <TextBlock Text="Output directory (for the fixdat)" FontSize="12"/>
                             <Grid ColumnDefinitions="*,Auto">
-                                <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools folder"
+                                <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools Studio folder"
                                          Margin="0,0,8,0"
-                                         ToolTip.Tip="The folder where the fixdat of missing files is written. If a path is not defined, the runtime directory is used instead."/>
+                                         ToolTip.Tip="Where the fixdat of missing files is written. If left blank, the folder containing SabreToolsStudio is used."/>
                                 <Button Grid.Column="1" Click="OnBrowseOutputClick" Content="Browse"
                                         ToolTip.Tip="Choose the folder where the fixdat will be written"/>
                             </Grid>

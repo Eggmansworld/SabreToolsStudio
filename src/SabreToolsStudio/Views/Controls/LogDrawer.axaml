@@ -55,7 +55,18 @@
                      IsVisible="{Binding IsExpanded}"
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     Padding="16,4"/>
+                     Padding="16,4">
+                <TextBox.ContextMenu>
+                    <ContextMenu Opening="OnLogMenuOpening">
+                        <MenuItem Header="Copy" Click="OnCopySelectionClick"/>
+                        <MenuItem Header="Select All" Click="OnSelectAllClick"/>
+                        <Separator/>
+                        <MenuItem Name="OpenInExplorerItem" Header="Open in File Explorer"
+                                  Click="OnOpenInExplorerClick"
+                                  ToolTip.Tip="Highlight a file or folder path in the log, then use this to open it in your file manager"/>
+                    </ContextMenu>
+                </TextBox.ContextMenu>
+            </TextBox>
         </DockPanel>
     </Border>
 </UserControl>

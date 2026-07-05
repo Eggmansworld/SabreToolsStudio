@@ -80,9 +80,21 @@ public abstract partial class FeaturePageViewModel : ViewModelBase
         return $"\"{arg.Replace("\"", "\\\"")}\"";
     }
 
+    /// <summary>Sink for user-facing status messages (wired to the log drawer)</summary>
+    public Action<string>? StatusLog { get; set; }
+
     /// <summary>Split a multiline/comma-separated text box into trimmed, non-empty values</summary>
     protected static IEnumerable<string> SplitMultiline(string text) =>
         text.Split(['\r', '\n', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    /// <summary>
+    /// Resolve the effective output directory: a blank box means the SabreTools
+    /// Studio application folder, never the bundled CLI's own folder
+    /// </summary>
+    protected static string ResolveOutputDir(string outputDir) =>
+        string.IsNullOrWhiteSpace(outputDir)
+            ? AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+            : outputDir.Trim();
 
     protected void NotifyCommandChanged()
     {
@@ -123,7 +135,10 @@ public abstract partial class FeaturePageViewModel : ViewModelBase
 
         PresetName = value;
         if (_presets.Load(FeatureKey, value) is JsonElement data)
+        {
             ApplyPreset(data);
+            StatusLog?.Invoke($"Preset '{value}' loaded for {Title}.");
+        }
     }
 
     private bool CanSavePreset() => !string.IsNullOrWhiteSpace(PresetName);
@@ -146,6 +161,8 @@ public abstract partial class FeaturePageViewModel : ViewModelBase
         _suppressPresetLoad = true;
         SelectedPreset = name;
         _suppressPresetLoad = false;
+
+        StatusLog?.Invoke($"Preset '{name}' for {Title} saved to {SettingsService.ConfigPath}");
     }
 
     private bool CanDeletePreset() => !string.IsNullOrEmpty(SelectedPreset);
@@ -161,6 +178,8 @@ public abstract partial class FeaturePageViewModel : ViewModelBase
         SelectedPreset = null;
         _suppressPresetLoad = false;
         PresetNames.Remove(name);
+
+        StatusLog?.Invoke($"Preset '{name}' for {Title} deleted.");
     }
 
     #endregion

@@ -113,6 +113,13 @@ public partial class LogDrawerViewModel : ViewModelBase
         FlushBuffer();
     }
 
+    /// <summary>Report a GUI-side informational message (e.g. preset saved) into the log</summary>
+    public void ReportInfo(string message)
+    {
+        AppendLine(message);
+        FlushBuffer();
+    }
+
     /// <summary>Report a GUI-side problem (e.g. missing executable) into the log</summary>
     public void ReportError(string message)
     {
