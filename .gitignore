@@ -1,0 +1,8 @@
+bin/
+obj/
+*.user
+.vs/
+.idea/
+
+# Published SabreTools CLI is produced by build-cli scripts, not committed
+tools/sabretools/

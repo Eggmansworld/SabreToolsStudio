@@ -1,0 +1,143 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:root="using:SabreToolsStudio"
+             x:Class="SabreToolsStudio.Views.Pages.StatisticsView"
+             x:DataType="vm:StatisticsViewModel">
+
+    <DockPanel Margin="28,24,28,20">
+
+        <!-- Header: title, description, presets -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,24,0">
+                <TextBlock Classes="pageTitle" Text="{Binding Title}"/>
+                <TextBlock Classes="subtle" Text="{Binding Description}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top">
+                <ComboBox ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}"
+                          PlaceholderText="Presets" MinWidth="150"
+                          ToolTip.Tip="Load a saved set of options for this feature"/>
+                <TextBox Text="{Binding PresetName}" Watermark="Preset name" MinWidth="130"
+                         ToolTip.Tip="Name to save the current options under"/>
+                <Button Command="{Binding SavePresetCommand}" ToolTip.Tip="Save the current options as a named preset">
+                    <PathIcon Data="{x:Static root:Icons.ContentSave}" Width="14" Height="14"/>
+                </Button>
+                <Button Command="{Binding DeletePresetCommand}" ToolTip.Tip="Delete the selected preset">
+                    <PathIcon Data="{x:Static root:Icons.Delete}" Width="14" Height="14"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid ColumnDefinitions="*,20,360">
+
+            <!-- Inputs -->
+            <Border Grid.Column="0" Classes="card" Name="InputsCard" DragDrop.AllowDrop="True">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,0,0,12">
+                        <Button Grid.Column="0" Click="OnAddFilesClick" Margin="0,0,8,0"
+                                ToolTip.Tip="Add one or more DAT files to the input list">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="{x:Static root:Icons.FileDocument}" Width="13" Height="13"/>
+                                <TextBlock Text="Add Files"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="1" Click="OnAddFolderClick"
+                                ToolTip.Tip="Add a folder of DAT files to the input list">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <PathIcon Data="{x:Static root:Icons.FolderPlus}" Width="13" Height="13"/>
+                                <TextBlock Text="Add Folder"/>
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Grid.Column="2" Classes="subtle" Text="or drag &amp; drop files here"
+                                   FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Button Grid.Column="3" Command="{Binding RemoveInputCommand}" Margin="0,0,8,0"
+                                ToolTip.Tip="Remove the selected input from the list">
+                            <TextBlock Text="Remove"/>
+                        </Button>
+                        <Button Grid.Column="4" Command="{Binding ClearInputsCommand}"
+                                ToolTip.Tip="Remove all inputs from the list">
+                            <TextBlock Text="Clear"/>
+                        </Button>
+                    </Grid>
+
+                    <Panel>
+                        <ListBox ItemsSource="{Binding Inputs}" SelectedItem="{Binding SelectedInput}"
+                                 Background="Transparent">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type x:String}">
+                                    <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" FontSize="13"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBlock Classes="subtle"
+                                   Text="No inputs yet. Add DAT files or folders containing DAT files."
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   IsVisible="{Binding !Inputs.Count}"/>
+                    </Panel>
+                </DockPanel>
+            </Border>
+
+            <!-- Options -->
+            <StackPanel Grid.Column="2" Spacing="16">
+
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Classes="sectionHeader" Text="Report Formats"/>
+                        <TextBlock Classes="subtle" FontSize="12" Margin="0,0,0,10"
+                                   Text="Output statistics to one or more formats. Text is used if none are selected."/>
+                        <ItemsControl ItemsSource="{Binding ReportFormats}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:FormatOption}">
+                                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Label}"
+                                              ToolTip.Tip="{Binding Description}" Margin="0,0,14,2"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel Spacing="10">
+                        <TextBlock Classes="sectionHeader" Text="Output" Margin="0,0,0,0"/>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Report filename" FontSize="12"/>
+                            <TextBox Text="{Binding Filename}" Watermark="Default: report"
+                                     ToolTip.Tip="Set the filename for the output report(s). Leave blank for the default name."/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Output directory" FontSize="12"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0" Text="{Binding OutputDir}" Watermark="Default: SabreTools folder"
+                                         Margin="0,0,8,0"
+                                         ToolTip.Tip="This sets an output folder to be used when the files are created. If a path is not defined, the runtime directory is used instead."/>
+                                <Button Grid.Column="1" Click="OnBrowseOutputClick" Content="Browse"
+                                        ToolTip.Tip="Choose the folder where the report will be written"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel Spacing="6">
+                        <TextBlock Classes="sectionHeader" Text="Options"/>
+                        <CheckBox IsChecked="{Binding BaddumpColumn}" Content="Add baddump stats to output"
+                                  ToolTip.Tip="Add a new column or field for counting the number of baddumps in the DAT."/>
+                        <CheckBox IsChecked="{Binding NodumpColumn}" Content="Add nodump stats to output"
+                                  ToolTip.Tip="Add a new column or field for counting the number of nodumps in the DAT."/>
+                        <CheckBox IsChecked="{Binding Individual}" Content="Process input DATs individually"
+                                  ToolTip.Tip="In cases where DATs would be processed in bulk, this flag allows them to be processed on their own instead of as one combined set of statistics."/>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>

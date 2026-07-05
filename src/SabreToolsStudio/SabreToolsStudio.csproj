@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <AssemblyName>SabreToolsStudio</AssemblyName>
+        <RootNamespace>SabreToolsStudio</RootNamespace>
+        <Version>0.1.0</Version>
+        <Authors>Eggman</Authors>
+        <Product>SabreTools Studio</Product>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.2" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.2" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.2" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.2" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.2" Condition="'$(Configuration)' == 'Debug'" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    </ItemGroup>
+
+    <!-- Bundle the SabreTools CLI (published into tools/sabretools by build-cli scripts) -->
+    <ItemGroup>
+        <None Include="..\..\tools\sabretools\**" CopyToOutputDirectory="PreserveNewest" LinkBase="sabretools" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,102 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Styles.Resources>
+        <ResourceDictionary>
+            <!-- Navigation rail item -->
+            <ControlTheme x:Key="NavItemTheme" TargetType="RadioButton">
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Margin" Value="0,1"/>
+                <Setter Property="Template">
+                    <ControlTemplate>
+                        <Border Name="PART_Root" CornerRadius="6" Background="Transparent" Padding="10,8">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Rectangle Name="PART_Indicator" Grid.Column="0" Width="3" Height="16"
+                                           RadiusX="1.5" RadiusY="1.5"
+                                           Fill="{DynamicResource AppAccentBrush}"
+                                           Opacity="0" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                                <ContentPresenter Grid.Column="1"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter>
+                <Style Selector="^:pointerover /template/ Border#PART_Root">
+                    <Setter Property="Background" Value="{DynamicResource AppNavHoverBrush}"/>
+                </Style>
+                <Style Selector="^:checked /template/ Border#PART_Root">
+                    <Setter Property="Background" Value="{DynamicResource AppNavSelectedBrush}"/>
+                </Style>
+                <Style Selector="^:checked /template/ Rectangle#PART_Indicator">
+                    <Setter Property="Opacity" Value="1"/>
+                </Style>
+            </ControlTheme>
+        </ResourceDictionary>
+    </Styles.Resources>
+
+    <!-- Card container -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="{DynamicResource AppCardBackground}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+
+    <!-- Page title -->
+    <Style Selector="TextBlock.pageTitle">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <!-- Page description / subtle text -->
+    <Style Selector="TextBlock.subtle">
+        <Setter Property="Foreground" Value="{DynamicResource AppSubtleTextBrush}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <!-- Card section header -->
+    <Style Selector="TextBlock.sectionHeader">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
+    </Style>
+
+    <!-- Nav rail group label -->
+    <Style Selector="TextBlock.navGroup">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource AppSubtleTextBrush}"/>
+        <Setter Property="Margin" Value="12,10,0,6"/>
+    </Style>
+
+    <!-- Wrapped, width-limited tooltips everywhere -->
+    <Style Selector="ToolTip">
+        <Setter Property="MaxWidth" Value="440"/>
+    </Style>
+    <Style Selector="ToolTip TextBlock">
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <!-- Monospace log output -->
+    <Style Selector="TextBox.log">
+        <Setter Property="FontFamily" Value="Cascadia Mono,Consolas,DejaVu Sans Mono,Liberation Mono,monospace"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Background" Value="{DynamicResource AppLogBackground}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+    </Style>
+
+    <!-- Compact icon buttons for toolbars -->
+    <Style Selector="Button.icon">
+        <Setter Property="Padding" Value="8,6"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+</Styles>

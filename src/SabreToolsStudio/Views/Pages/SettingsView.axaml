@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             x:Class="SabreToolsStudio.Views.Pages.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+    <DockPanel Margin="28,24,28,20">
+        <StackPanel DockPanel.Dock="Top" Spacing="4" Margin="0,0,0,20">
+            <TextBlock Classes="pageTitle" Text="{Binding Title}"/>
+            <TextBlock Classes="subtle" Text="Application preferences and global options applied to every operation."/>
+        </StackPanel>
+
+        <StackPanel Spacing="16" MaxWidth="720" HorizontalAlignment="Left">
+
+            <Border Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="sectionHeader" Text="Appearance"/>
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Theme" FontSize="12"/>
+                        <ComboBox ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedTheme}"
+                                  MinWidth="200"
+                                  ToolTip.Tip="System follows your operating system's light/dark preference. Light and Dark force a specific theme."/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="sectionHeader" Text="SabreTools Executable"/>
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Custom path (leave blank to use the bundled copy)" FontSize="12"/>
+                        <Grid ColumnDefinitions="*,Auto,Auto">
+                            <TextBox Grid.Column="0" Text="{Binding SabreToolsPath}" Watermark="Bundled copy"
+                                     Margin="0,0,8,0"
+                                     ToolTip.Tip="Point SabreTools Studio at a different SabreTools executable, for example a newer release you downloaded."/>
+                            <Button Grid.Column="1" Click="OnBrowseExeClick" Content="Browse" Margin="0,0,8,0"
+                                    ToolTip.Tip="Locate a SabreTools executable on disk"/>
+                            <Button Grid.Column="2" Command="{Binding UseBundledCommand}" Content="Use Bundled"
+                                    ToolTip.Tip="Clear the custom path and use the copy of SabreTools shipped with this application"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="Currently using" FontSize="12"/>
+                        <SelectableTextBlock Text="{Binding ResolvedPathDisplay}" FontSize="12"
+                                             Foreground="{DynamicResource AppSubtleTextBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="sectionHeader" Text="Global CLI Options"/>
+                    <Grid ColumnDefinitions="*,20,*">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Text="Threads" FontSize="12"/>
+                            <TextBox Text="{Binding ThreadsText}" Watermark="Default: machine threads"
+                                     ToolTip.Tip="Set the number of threads to use for the multithreaded operations. The default is the number of available machine threads. Leave blank for the default."/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Spacing="4">
+                            <TextBlock Text="Log level" FontSize="12"/>
+                            <ComboBox ItemsSource="{Binding LogLevels}" SelectedItem="{Binding SelectedLogLevel}"
+                                      HorizontalAlignment="Stretch"
+                                      ToolTip.Tip="Set the lowest log level for output: verbose shows all logs, user hides verbose logs, warning shows only warnings and errors, error shows only errors."/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </DockPanel>
+</UserControl>

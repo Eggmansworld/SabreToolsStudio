@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:SabreToolsStudio.ViewModels"
+             xmlns:root="using:SabreToolsStudio"
+             x:Class="SabreToolsStudio.Views.Controls.LogDrawer"
+             x:DataType="vm:LogDrawerViewModel">
+
+    <Border Name="DrawerRoot" Height="38"
+            Background="{DynamicResource AppDrawerBackground}"
+            BorderBrush="{DynamicResource AppBorderBrush}"
+            BorderThickness="0,1,0,0"
+            ClipToBounds="True">
+        <Border.Transitions>
+            <Transitions>
+                <DoubleTransition Property="Height" Duration="0:0:0.25" Easing="CubicEaseOut"/>
+            </Transitions>
+        </Border.Transitions>
+
+        <DockPanel>
+            <!-- Status strip (always visible) -->
+            <Grid DockPanel.Dock="Top" Height="37" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" Margin="16,0,10,0">
+                <Ellipse Grid.Column="0" Width="9" Height="9" Fill="{Binding StatusBrush}"
+                         VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock Grid.Column="1" Text="{Binding StatusText}" FontWeight="SemiBold" FontSize="12"
+                           VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Grid.Column="2" Text="{Binding Elapsed}" FontSize="12"
+                           Foreground="{DynamicResource AppSubtleTextBrush}"
+                           VerticalAlignment="Center" Margin="0,0,16,0"/>
+                <TextBlock Grid.Column="3" Text="{Binding LastLine}" FontSize="12"
+                           FontFamily="Cascadia Mono,Consolas,DejaVu Sans Mono,Liberation Mono,monospace"
+                           Foreground="{DynamicResource AppSubtleTextBrush}"
+                           TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                <Button Grid.Column="4" Classes="icon" Name="CopyLogButton" Click="OnCopyLogClick"
+                        ToolTip.Tip="Copy the full log to the clipboard" VerticalAlignment="Center">
+                    <PathIcon Data="{x:Static root:Icons.ContentCopy}" Width="13" Height="13"/>
+                </Button>
+                <Button Grid.Column="5" Classes="icon" Command="{Binding ClearCommand}"
+                        ToolTip.Tip="Clear the log" VerticalAlignment="Center">
+                    <PathIcon Data="{x:Static root:Icons.Delete}" Width="13" Height="13"/>
+                </Button>
+                <Button Grid.Column="6" Classes="icon" Command="{Binding ToggleExpandedCommand}"
+                        ToolTip.Tip="Show or hide the log output" VerticalAlignment="Center">
+                    <Panel>
+                        <PathIcon Data="{x:Static root:Icons.ChevronUp}" Width="14" Height="14"
+                                  IsVisible="{Binding !IsExpanded}"/>
+                        <PathIcon Data="{x:Static root:Icons.ChevronDown}" Width="14" Height="14"
+                                  IsVisible="{Binding IsExpanded}"/>
+                    </Panel>
+                </Button>
+            </Grid>
+
+            <!-- Log output (revealed when expanded) -->
+            <TextBox Name="LogBox" Classes="log" Text="{Binding LogText, Mode=OneWay}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     Padding="16,4"/>
+        </DockPanel>
+    </Border>
+</UserControl>
